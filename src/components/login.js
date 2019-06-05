@@ -12,9 +12,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-// import firebase from './src/firebaseConfig';
-// eslint-disable-next-line
-// const database = firebase.firestore();
+import firebase from '../firebaseConfig';
+
+
+const database = firebase.firestore();
 
 
 const useStyles = makeStyles(theme => ({
@@ -34,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -48,6 +49,7 @@ class Login extends React.Component {
     super(props);
     this.state = {
       name: "",
+      email: "",
       password: "",
       listItem: []
     };
@@ -56,22 +58,26 @@ class Login extends React.Component {
     const newState = this.state;
     newState[element] = event.target.value
     this.setState(newState)
+    console.log(newState)
   }
   handleClick = (event) => {
+    const object = {
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password
+    };
+    console.log(object.name, object.password)
+    database.collection('funcionarios').add(object)
     this.setState({
-      listItem: this.state.listItem.concat({
-        email: this.state.email,
-        password: this.state.password
-      }),
-    })
-  };
-
+      listItem: this.state.listItem.concat(object),
+    });
+   
+  }
+  
   render() {
-    const { name, password, listItem  } = this.state
     const classes = useStyles;
 
     return (
-
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -82,7 +88,7 @@ class Login extends React.Component {
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
-              value={name}
+              value={this.state.name}
               onChange={(e) => this.handleChange(e, "name")}
               variant="outlined"
               margin="normal"
@@ -94,7 +100,20 @@ class Login extends React.Component {
               autoFocus
             />
             <TextField
-              value={password}
+              value={this.state.email}
+              onChange={(e) => this.handleChange(e, "email")}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="email"
+              label="Email"
+              type="email"
+              id="email"
+              autoComplete="current-password"
+            />
+            <TextField
+              value={this.state.password}
               onChange={(e) => this.handleChange(e, "password")}
               variant="outlined"
               margin="normal"
@@ -109,29 +128,21 @@ class Login extends React.Component {
             <FormControlLabel
               control={<Checkbox value="salao" color="primary" />}
               label="Salão"
-
             />
             <FormControlLabel
               control={<Checkbox value="cozinha" color="primary" />}
               label="Cozinha"
-              
-
             />
             <Button
-              type="submit"
+              
               onClick={this.handleClick}
+              text="Entrar"
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
-              {
-                ...listItem.map(item => {
-                  return <p key={item.email}>{item.email} | {item.password}</p>
-                })
-              }
             >
               Entrar
-          </Button>
+             </Button>
             <Grid container>
               <Grid item md>
                 <Link href="#" variant="body2">
@@ -148,7 +159,9 @@ class Login extends React.Component {
         </div>
 
       </Container >
+
     );
-}}
+  };
+}
 
 export default Login;
