@@ -54,6 +54,14 @@ class Login extends React.Component {
       listItem: []
     };
   }
+
+componentDidMount() {
+  database.collection('funcionarios').get()
+  .then((querySnapshot) => {
+    console.log(querySnapshot)
+  })
+}
+
   handleChange = (event, element) => {
     const newState = this.state;
     newState[element] = event.target.value
@@ -65,6 +73,7 @@ class Login extends React.Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password
+      
     };
     console.log(object.name, object.password)
     database.collection('funcionarios').add(object)
