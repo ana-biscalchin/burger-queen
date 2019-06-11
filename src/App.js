@@ -1,29 +1,24 @@
 import React from 'react';
 import './App.css';
-// import firebase from "./firebaseConfig";
-import Login from './components/login';
+
+import Home from './components/home';
+import Hall from './components/hall';
+import Kitchen from './components/kitchen';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
+function App() {
+  return (
+    <Router>
       <div className="App">
         <header className="App-header">
         </header>
-      
-        <Login />
-      
+        <Route exact path="/" component={Home} />
+        <Route exact path="/hall" component={Hall} />
+        <Route exact path="/kitchen" component={Kitchen} />
       </div>
-    );
-  }
-}
-
-
+    </Router>
+  );
+};
 
 export default App;

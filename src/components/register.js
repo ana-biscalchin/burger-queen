@@ -1,17 +1,25 @@
 import React from 'react';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
+import Box from '@material-ui/core/Box';
+
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+
+
 import firebase from '../firebaseConfig';
 import withFirebaseAuth from 'react-with-firebase-auth';
- 
 
 const firebaseAppAuth = firebase.auth();
+const database = firebase.firestore();
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -37,29 +45,44 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-class Login extends React.Component {
+class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      name: "",
       email: "",
       password: "",
+      local: "",
     };
-  }
-
-  signIn = () => {
-    this.props.signInWithEmailAndPassword(
-      this.state.email,
-      this.state.password,
-    )
-      .then(() => {
-        alert("logado")
-      });
   };
 
-  signOut = () => {
-    firebase.auth().signOut()
-      .then(() => { window.location = "index.html" })
-      .catch((error) => { console.error(error) })
+ 
+  createUser = () => {
+    const object = {
+      userId: this.props.user.uid,
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+      local: this.state.local
+    }
+    this.props.createUserWithEmailAndPassword(
+      this.state.email,
+      this.state.password,
+    ) 
+      .then(() => {
+        console.log(object)
+        database.collection('funcionarios').doc(this.props.user.uid).set(object);
+        alert("criado")
+      })
+      .then(() => {
+        const { local } = object;
+        console.log(object.local)
+          this.props.history.push(`/${object.local}`)
+      })
+      .catch((error) => {
+        let errorMessage = error.message;
+        alert(errorMessage);
+      });
   };
 
   handleChange = (event, element) => {
@@ -67,7 +90,7 @@ class Login extends React.Component {
     newState[element] = event.target.value
     this.setState(newState)
     console.log(newState)
-  };
+  }
 
   render() {
     const classes = useStyles;
@@ -80,15 +103,27 @@ class Login extends React.Component {
           <form className={classes.form} noValidate>
             <TextField
               value={this.state.name}
+              onChange={(e) => this.handleChange(e, "name")}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Nome"
+              name="register-name"
+              autoFocus
+            />
+            <TextField
+              value={this.state.email}
               onChange={(e) => this.handleChange(e, "email")}
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email"
               name="email"
-              autoFocus
+              label="Email"
+              type="email"
+              id="register-email"
             />
             <TextField
               value={this.state.password}
@@ -100,40 +135,43 @@ class Login extends React.Component {
               name="password"
               label="Senha"
               type="password"
-              id="password"
-              autoComplete="current-password"
+              id="register-password"
             />
-
+            <Box>
+              <RadioGroup onChange={(e) => this.handleChange(e, "local")}>
+                <FormControlLabel
+                  value="hall"
+                  control={<Radio color="primary" />}
+                  label="Salão"
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="kitchen"
+                  control={<Radio color="primary" />}
+                  label="Cozinha"
+                  labelPlacement="end"
+                />
+              </RadioGroup>
+            </Box>
             <Button
-              onClick={this.signIn}
+              onClick={this.createUser}
               text="Entrar"
               fullWidth
               variant="contained"
               color="primary"
             >
-              Entrar
-               </Button>
-            <Grid container>
-              <Grid item md>
-                <Link href="#" variant="body2">
-                  Esqueceu a senha?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Cadastre-se"}
-                </Link>
-              </Grid>
-            </Grid>
+              Cadastrar
+             </Button>
           </form>
-        </div>
-
+        </div >
       </Container >
     );
   };
 }
 
-
-export default withFirebaseAuth({
-  firebaseAppAuth,
-})(Login);
+export default compose(
+  withFirebaseAuth({
+    firebaseAppAuth,
+  }),
+  withRouter,
+)(Register);
