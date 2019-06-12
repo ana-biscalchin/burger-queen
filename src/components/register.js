@@ -70,14 +70,8 @@ class Register extends React.Component {
       this.state.password,
     ) 
       .then(() => {
-        console.log(object)
         database.collection('funcionarios').doc(this.props.user.uid).set(object);
-        alert("criado")
-      })
-      .then(() => {
-        const { local } = object;
-        console.log(object.local)
-          this.props.history.push(`/${object.local}`)
+        this.props.history.push(`/${object.local}`)
       })
       .catch((error) => {
         let errorMessage = error.message;
