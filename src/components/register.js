@@ -10,11 +10,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
-import Box from '@material-ui/core/Box';
-
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-
-
 import firebase from '../firebaseConfig';
 import withFirebaseAuth from 'react-with-firebase-auth';
 
@@ -56,7 +51,6 @@ class Register extends React.Component {
     };
   };
 
- 
   createUser = () => {
     const object = {
       userId: this.props.user.uid,
@@ -68,14 +62,13 @@ class Register extends React.Component {
     this.props.createUserWithEmailAndPassword(
       this.state.email,
       this.state.password,
-    ) 
+    )
       .then(() => {
         database.collection('funcionarios').doc(this.props.user.uid).set(object);
         this.props.history.push(`/${object.local}`)
       })
       .catch((error) => {
-        let errorMessage = error.message;
-        alert(errorMessage);
+        alert("Verifique se os campos estão preenchidos corretamente");
       });
   };
 
@@ -131,22 +124,20 @@ class Register extends React.Component {
               type="password"
               id="register-password"
             />
-            <Box>
-              <RadioGroup onChange={(e) => this.handleChange(e, "local")}>
-                <FormControlLabel
-                  value="hall"
-                  control={<Radio color="primary" />}
-                  label="Salão"
-                  labelPlacement="end"
-                />
-                <FormControlLabel
-                  value="kitchen"
-                  control={<Radio color="primary" />}
-                  label="Cozinha"
-                  labelPlacement="end"
-                />
-              </RadioGroup>
-            </Box>
+            <RadioGroup onChange={(e) => this.handleChange(e, "local")}>
+              <FormControlLabel
+                value="hall"
+                control={<Radio color="primary" />}
+                label="Salão"
+                labelPlacement="end"
+              />
+              <FormControlLabel
+                value="kitchen"
+                control={<Radio color="primary" />}
+                label="Cozinha"
+                labelPlacement="end"
+              />
+            </RadioGroup>
             <Button
               onClick={this.createUser}
               text="Entrar"

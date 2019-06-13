@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-import Container from '@material-ui/core/Container';
+import Paper from '@material-ui/core/Paper';
+import Grid from "@material-ui/core/Grid";
 import firebase from '../firebaseConfig';
 import withFirebaseAuth from 'react-with-firebase-auth';
 
@@ -27,8 +27,13 @@ TabContainer.propTypes = {
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-    flexGrow: 2,
-  }
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
 }));
 
 const product = [
@@ -94,16 +99,15 @@ const product = [
   }
 ]
 
-// signOut = () => {
-//   firebase.auth().signOut().then(function () {
-//     console.log("Sign-out successful");
-//   }).then(() => {
-//     this.props.history.push('/');
-//   })
-//     .catch(function (error) {
-//       console.log("An error happened");
-//     });
-// }
+function signOut() {
+  firebase.auth().signOut()
+  .then(function () {
+    this.props.history.push('/');
+  })
+    .catch(function () {
+      console.log("Você ainda está logado");
+    });
+}
 
 // componentDidMount() {
 //   firebase.auth().onAuthStateChanged(function (user) {
@@ -127,55 +131,60 @@ function MenuTabs() {
     setValue(newValue);
   }
 
-  function handleChangeIndex(index) {
-    setValue(index);
-  }
+  // function handleChangeIndex(index) {
+  //   setValue(index);
+  // }
 
   function selectItem(product) {
-   console.log(product)
-  } 
+    console.log(product)
+  }
 
   return (
     <div className={classes.root}  >
-      <Container component="main" maxWidth="xs">
-        <AppBar position="static" color="default" >
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-          >
-            <Tab label="Café da Manhã" />
-            <Tab label=" Dia" />
-          </Tabs>
-        </AppBar>
-        <SwipeableViews
-          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-          index={value}
-          onChangeIndex={handleChangeIndex}
-        >
-          <TabContainer dir={theme.direction}> {
-            product.map((product, i) => { 
-              if (product.menu === "manhã") {
-                return <button value=""> {product.name}<br></br>{product.price} </button>
-              }
-            })            
-          }  
-          </TabContainer>
-          <TabContainer dir={theme.direction}> {
-            product.map((product, i) => { 
-              if (product.menu === "dia") {
-                return <button value=" " onclick={() => selectItem(product) } > {product.name}<br></br>{product.price} </button>
-              }
-            })            
-          }  
-          </TabContainer>
-        </SwipeableViews>
-      </Container>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper className={classes.paper}>cliente:   <button onClick={() => signOut()}>Log Out</button></Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper className={classes.paper}><AppBar position="static" color="default">
+            <Tabs value={value} onChange={handleChange} variant="fullWidth" indicatorColor="primary">
+              <Tab label="Café da manhã" />
+              <Tab label="Geral" />
+            </Tabs>
+          </AppBar>
+            {value === 0 && <TabContainer dir={theme.direction}> {
+              product.map((product, i) => {
+                if (product.menu === "manhã") {
+                  return <button value="" onClick={() => selectItem(product)}> {product.name}<br></br>{product.price} </button>
+                }
+              })
+            }
+            </TabContainer>}
+            {value === 1 && <TabContainer dir={theme.direction}> {
+              product.map((product, i) => {
+                if (product.menu === "dia") {
+                  return <button value=" " onClick={() => selectItem(product)} > {product.name}<br></br>{product.price} </button>
+                }
+              })
+            }
+            </TabContainer>}
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper className={classes.paper}>Pedido
+          <Paper className={classes.paper}>
+              <br></br>
+              <br></br>
+              <br></br>
+            </Paper>
+            <button> Enviar </button>
+          </Paper>
+        </Grid>
+      </Grid>
     </div>
   );
 }
+
 
 export default MenuTabs;
 
