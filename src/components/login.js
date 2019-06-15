@@ -1,4 +1,6 @@
 import React from 'react';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -9,9 +11,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import firebase from '../firebaseConfig';
 import withFirebaseAuth from 'react-with-firebase-auth';
- 
 
 const firebaseAppAuth = firebase.auth();
+const database = firebase.firestore();
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -52,21 +54,30 @@ class Login extends React.Component {
       this.state.password,
     )
       .then(() => {
-        alert("logado")
-      });
-  };
+        console.log(this.props)
+        database.collection('team').doc(this.props.user.uid).get()
+          .then( (doc) => {
+            console.log(doc.data().local)
+            this.props.history.push(`/${doc.data().local}`)
+          })
+      })
+  }
 
-  signOut = () => {
-    firebase.auth().signOut()
-      .then(() => { window.location = "index.html" })
-      .catch((error) => { console.error(error) })
-  };
+
+  // firebase.auth().sendPasswordResetEmail(
+  //   'user@example.com', actionCodeSettings)
+  //   .then(function() {
+  //     // Password reset email sent.
+  //   })
+  //   .catch(function(error) {
+  //     // Error occurred. Inspect error.code.
+  //   });
+
 
   handleChange = (event, element) => {
     const newState = this.state;
     newState[element] = event.target.value
     this.setState(newState)
-    console.log(newState)
   };
 
   render() {
@@ -103,7 +114,6 @@ class Login extends React.Component {
               id="password"
               autoComplete="current-password"
             />
-
             <Button
               onClick={this.signIn}
               text="Entrar"
@@ -133,7 +143,9 @@ class Login extends React.Component {
   };
 }
 
-
-export default withFirebaseAuth({
-  firebaseAppAuth,
-})(Login);
+export default compose(
+  withFirebaseAuth({
+    firebaseAppAuth,
+  }),
+  withRouter,
+)(Login);

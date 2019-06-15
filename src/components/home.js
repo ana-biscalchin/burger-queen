@@ -11,10 +11,8 @@ import Register from './register';
 import Login from './login';
 
 
- 
 const TabContainer = ({ children, dir }) => {
   return (
-
     <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
       {children}
     </Typography>
@@ -33,7 +31,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Home() {
+function Home(props) {
+
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -68,7 +67,7 @@ function Home() {
           onChangeIndex={handleChangeIndex}
         >
           <TabContainer dir={theme.direction}><Register /></TabContainer>
-          <TabContainer dir={theme.direction}><Login /></TabContainer>
+          <TabContainer dir={theme.direction}><Login history={props.history} /></TabContainer>
         </SwipeableViews>
       </Container>
     </div>

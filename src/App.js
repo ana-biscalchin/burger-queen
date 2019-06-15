@@ -4,7 +4,7 @@ import './App.css';
 import Home from './components/home';
 import Hall from './components/hall';
 import Kitchen from './components/kitchen';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 
 function App() {

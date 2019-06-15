@@ -59,7 +59,6 @@ class Register extends React.Component {
  
   createUser = () => {
     const object = {
-      userId: this.props.user.uid,
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
@@ -71,11 +70,10 @@ class Register extends React.Component {
     ) 
       .then(() => {
         console.log(object)
-        database.collection('funcionarios').doc(this.props.user.uid).set(object);
+        database.collection('team').doc(this.props.user.uid).set(object);
         alert("criado")
       })
       .then(() => {
-        const { local } = object;
         console.log(object.local)
           this.props.history.push(`/${object.local}`)
       })
@@ -89,8 +87,7 @@ class Register extends React.Component {
     const newState = this.state;
     newState[element] = event.target.value
     this.setState(newState)
-    console.log(newState)
-  }
+   }
 
   render() {
     const classes = useStyles;
