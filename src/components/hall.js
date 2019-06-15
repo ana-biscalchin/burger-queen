@@ -7,8 +7,10 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 import Grid from "@material-ui/core/Grid";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+
 import firebase from '../firebaseConfig';
-import withFirebaseAuth from 'react-with-firebase-auth';
 
 const TabContainer = ({ children, dir }) => {
   return (
@@ -97,95 +99,97 @@ const product = [
     price: 10,
     menu: "dia"
   }
-]
+];
 
-function signOut() {
-  firebase.auth().signOut()
-  .then(function () {
-    this.props.history.push('/');
-  })
-    .catch(function () {
-      console.log("Você ainda está logado");
-    });
-}
+class Hall extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      colaborator: '',
+      order: [],
+      customerName: "",
+      totalPrice: 0,
 
-// componentDidMount() {
-//   firebase.auth().onAuthStateChanged(function (user) {
-//     if (user) {
-//       console.log('logado');
-//     } else {
-//       console.log("User is signed out.");
-//     }
-//   });
-
-// }
-
-function MenuTabs() {
-
-
-  const classes = useStyles();
-  const theme = useTheme();
-  const [value, setValue] = React.useState(0);
-
-  function handleChange(event, newValue) {
-    setValue(newValue);
+    };
   }
 
-  // function handleChangeIndex(index) {
-  //   setValue(index);
-  // }
-
-  function selectItem(product) {
-    console.log(product)
+  sair = () => {
+    firebase.auth().signOut().then(() => {
+      this.props.history.push(`/`);
+    })
   }
 
-  return (
-    <div className={classes.root}  >
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper className={classes.paper}>cliente:   <button onClick={() => signOut()}>Log Out</button></Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}><AppBar position="static" color="default">
-            <Tabs value={value} onChange={handleChange} variant="fullWidth" indicatorColor="primary">
-              <Tab label="Café da manhã" />
-              <Tab label="Geral" />
-            </Tabs>
-          </AppBar>
-            {value === 0 && <TabContainer dir={theme.direction}> {
-              product.map((product, i) => {
-                if (product.menu === "manhã") {
-                  return <button value="" onClick={() => selectItem(product)}> {product.name}<br></br>{product.price} </button>
-                }
-              })
-            }
-            </TabContainer>}
-            {value === 1 && <TabContainer dir={theme.direction}> {
-              product.map((product, i) => {
-                if (product.menu === "dia") {
-                  return <button value=" " onClick={() => selectItem(product)} > {product.name}<br></br>{product.price} </button>
-                }
-              })
-            }
-            </TabContainer>}
-          </Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>Pedido
-          <Paper className={classes.paper}>
-              <br></br>
-              <br></br>
-              <br></br>
+  handleChange = (event, element) => {
+    const newState = this.state;
+    newState[element] = event.target.value
+    this.setState(newState)
+  };
+
+  selectItem = (product) => {
+    this.state.order.push(product)
+    console.log(this.state.order.map(({ name }) => ({ name })))
+    console.log(this.state.order.map(({ price }) => ({ price })))
+  };
+
+  render() {
+    const classes = useStyles;
+    const theme = useTheme;
+
+    return (
+      <div className={classes.root} >
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Paper className={classes.paper}>
+              <TextField
+                type="text"
+                value={this.state.customerName}
+                placeholder="Digite o nome do cliente"
+                onChange={(e) => this.handleChange(e, "customerName")}
+              />
+              <Button onClick={this.sair}>LogOut</Button>  </Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper className={classes.paper}><AppBar position="static" color="default">
+              <Tabs onChange={this.handleChange} variant="fullWidth" indicatorColor="primary">
+                <Tab label="Café da manhã" />
+                <Tab label="Geral" />
+              </Tabs>
+            </AppBar>
+              <TabContainer dir={theme.direction}> {
+                product.map((product, i) => {
+                  if (product.menu === "manhã") {
+                    return <button value="" onClick={() => this.selectItem(product)}> {product.name}<br></br>{product.price} </button>
+                  }
+                })
+              }
+              </TabContainer>
+              <TabContainer dir={theme.direction}> {
+                product.map((product, i) => {
+                  if (product.menu === "dia") {
+                    return <button value="" onClick={() => this.selectItem(product)} > {product.name}<br></br>{product.price} </button>
+                  }
+                })
+              }
+              </TabContainer>
             </Paper>
-            <button> Enviar </button>
-          </Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper className={classes.paper}>Pedido
+            <Paper className={classes.paper}> {
+                this.state.order.map((product, i) => {
+                  return <div key={i}> <span>{product} - {product}</span> </div>  // ainda não funciona
+                })
+              }
+             </Paper>
+              <button> Enviar </button>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
-  );
+      </div>
+    )
+  };
 }
 
-
-export default MenuTabs;
+export default Hall;
 
 

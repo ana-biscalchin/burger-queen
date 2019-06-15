@@ -10,6 +10,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
+import Box from '@material-ui/core/Box';
+
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+
+
 import firebase from '../firebaseConfig';
 import withFirebaseAuth from 'react-with-firebase-auth';
 
@@ -51,9 +56,9 @@ class Register extends React.Component {
     };
   };
 
+ 
   createUser = () => {
     const object = {
-      userId: this.props.user.uid,
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
@@ -62,13 +67,19 @@ class Register extends React.Component {
     this.props.createUserWithEmailAndPassword(
       this.state.email,
       this.state.password,
-    )
+    ) 
       .then(() => {
-        database.collection('funcionarios').doc(this.props.user.uid).set(object);
-        this.props.history.push(`/${object.local}`)
+        console.log(object)
+        database.collection('team').doc(this.props.user.uid).set(object);
+        alert("criado")
+      })
+      .then(() => {
+        console.log(object.local)
+          this.props.history.push(`/${object.local}`)
       })
       .catch((error) => {
-        alert("Verifique se os campos estão preenchidos corretamente");
+        let errorMessage = error.message;
+        alert(errorMessage);
       });
   };
 
@@ -76,8 +87,7 @@ class Register extends React.Component {
     const newState = this.state;
     newState[element] = event.target.value
     this.setState(newState)
-    console.log(newState)
-  }
+   }
 
   render() {
     const classes = useStyles;
@@ -124,20 +134,22 @@ class Register extends React.Component {
               type="password"
               id="register-password"
             />
-            <RadioGroup onChange={(e) => this.handleChange(e, "local")}>
-              <FormControlLabel
-                value="hall"
-                control={<Radio color="primary" />}
-                label="Salão"
-                labelPlacement="end"
-              />
-              <FormControlLabel
-                value="kitchen"
-                control={<Radio color="primary" />}
-                label="Cozinha"
-                labelPlacement="end"
-              />
-            </RadioGroup>
+            <Box>
+              <RadioGroup onChange={(e) => this.handleChange(e, "local")}>
+                <FormControlLabel
+                  value="hall"
+                  control={<Radio color="primary" />}
+                  label="Salão"
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="kitchen"
+                  control={<Radio color="primary" />}
+                  label="Cozinha"
+                  labelPlacement="end"
+                />
+              </RadioGroup>
+            </Box>
             <Button
               onClick={this.createUser}
               text="Entrar"

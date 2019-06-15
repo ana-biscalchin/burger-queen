@@ -25,50 +25,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function KitchenControl() {
-    // const classes = useStyles();
-    // const theme = useTheme();
-    // const [value, setValue] = React.useState(0);
+    const classes = useStyles();
+    const theme = useTheme();
+    const [value, setValue] = React.useState(0);
   
-    // function handleChange(event, newValue) {
-    //   setValue(newValue);
-    // }
+    function handleChange(event, newValue) {
+      setValue(newValue);
+    }
   
-    // function handleChangeIndex(index) {
-    //   setValue(index);
-    // }
+    function handleChangeIndex(index) {
+      setValue(index);
+    }
   
     return (
         <div> 
         <p>
         Cozinha</p>
 </div>
-
-    //   <div className={classes.root}  >
-
-        // <Container component="main" maxWidth="xs">
-        //   <AppBar position="static" color="default" >
-        //     <Tabs
-        //       value={value}
-        //       onChange={handleChange}
-        //       indicatorColor="primary"
-        //       textColor="primary"
-        //       variant="fullWidth"
-  
-        //     >
-        //       <Tab label="Cadastro" />
-        //       <Tab label="Login" />
-        //     </Tabs>
-        //   </AppBar>
-        //   <SwipeableViews
-        //     axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-        //     index={value}
-        //     onChangeIndex={handleChangeIndex}
-        //   >
-        //     <TabContainer dir={theme.direction}><Register /></TabContainer>
-        //     <TabContainer dir={theme.direction}><Login /></TabContainer>
-        //   </SwipeableViews>
-        // </Container>
-    //   </div>
   
     );
   }

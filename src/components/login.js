@@ -53,90 +53,94 @@ class Login extends React.Component {
       this.state.email,
       this.state.password,
     )
-
-    database.collection('funcionarios').doc(this.props.user.uid).get()
-    .then(function(doc) {
-    if (doc.exists) {
-        let a = doc.data().local;
-     console.log(a)
-    this.props.history.push(`/${doc.data().local}`)
-
-
-    } 
-    else {
-        console.log("No such document!");
-    }
-  })
-}
+      .then(() => {
+        console.log(this.props)
+        database.collection('team').doc(this.props.user.uid).get()
+          .then( (doc) => {
+            console.log(doc.data().local)
+            this.props.history.push(`/${doc.data().local}`)
+          })
+      })
+  }
 
 
-handleChange = (event, element) => {
-  const newState = this.state;
-  newState[element] = event.target.value
-  this.setState(newState)
-};
+  // firebase.auth().sendPasswordResetEmail(
+  //   'user@example.com', actionCodeSettings)
+  //   .then(function() {
+  //     // Password reset email sent.
+  //   })
+  //   .catch(function(error) {
+  //     // Error occurred. Inspect error.code.
+  //   });
 
-render() {
-  const classes = useStyles;
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            value={this.state.name}
-            onChange={(e) => this.handleChange(e, "email")}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email"
-            name="email"
-            autoFocus
-          />
-          <TextField
-            value={this.state.password}
-            onChange={(e) => this.handleChange(e, "password")}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Senha"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-            onClick={this.signIn}
-            text="Entrar"
-            fullWidth
-            variant="contained"
-            color="primary"
-          >
-            Entrar
+
+  handleChange = (event, element) => {
+    const newState = this.state;
+    newState[element] = event.target.value
+    this.setState(newState)
+  };
+
+  render() {
+    const classes = useStyles;
+    return (
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h5">
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextField
+              value={this.state.name}
+              onChange={(e) => this.handleChange(e, "email")}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoFocus
+            />
+            <TextField
+              value={this.state.password}
+              onChange={(e) => this.handleChange(e, "password")}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Senha"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <Button
+              onClick={this.signIn}
+              text="Entrar"
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
+              Entrar
                </Button>
-          <Grid container>
-            <Grid item md>
-              <Link href="#" variant="body2">
-                Esqueceu a senha?
+            <Grid container>
+              <Grid item md>
+                <Link href="#" variant="body2">
+                  Esqueceu a senha?
                 </Link>
+              </Grid>
+              <Grid item>
+                <Link href="#" variant="body2">
+                  {"Cadastre-se"}
+                </Link>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Cadastre-se"}
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
+          </form>
+        </div>
 
-    </Container >
-  );
-};
+      </Container >
+    );
+  };
 }
 
 export default compose(
