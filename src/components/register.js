@@ -12,9 +12,6 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
 import Box from '@material-ui/core/Box';
 
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-
-
 import firebase from '../firebaseConfig';
 import withFirebaseAuth from 'react-with-firebase-auth';
 
@@ -45,6 +42,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const waiterName = firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+    const displayName = user.displayName
+  } else {
+    // User is signed out.
+    // ...
+  }
+});
+
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -56,7 +63,6 @@ class Register extends React.Component {
     };
   };
 
- 
   createUser = () => {
     const object = {
       name: this.state.name,

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+// import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
  
 const TabContainer = ({ children, dir }) => {
@@ -17,25 +17,25 @@ TabContainer.propTypes = {
   dir: PropTypes.string.isRequired
 };
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    flexGrow: 2,
-  }
-}));
+// const useStyles = makeStyles(theme => ({
+//   root: {
+//     backgroundColor: theme.palette.background.paper,
+//     flexGrow: 2,
+//   }
+// }));
 
 function KitchenControl() {
-    const classes = useStyles();
-    const theme = useTheme();
-    const [value, setValue] = React.useState(0);
+    // const classes = useStyles();
+    // const theme = useTheme();
+    // const [value, setValue] = React.useState(0);
   
-    function handleChange(event, newValue) {
-      setValue(newValue);
-    }
+    // function handleChange(event, newValue) {
+    //   setValue(newValue);
+    // }
   
-    function handleChangeIndex(index) {
-      setValue(index);
-    }
+    // function handleChangeIndex(index) {
+    //   setValue(index);
+    // }
   
     return (
         <div> 

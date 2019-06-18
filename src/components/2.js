@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import PropTypes from "prop-types";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
 import Paper from '@material-ui/core/Paper';
 import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button';
@@ -17,13 +16,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 
+
+
 import firebase from '../firebaseConfig';
-const database = firebase.firestore();
-const firebaseAppAuth = firebase.auth();
 
-
-function TabContainer({ children, dir }) {
+const TabContainer = ({ children, dir }) => {
   return (
+
     <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
       {children}
     </Typography>
@@ -32,18 +31,20 @@ function TabContainer({ children, dir }) {
 
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired,
+  dir: PropTypes.string.isRequired
 };
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-    width: 500,
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
   },
 }));
-
-const classes = useStyles;
-const theme = useTheme;
 
 const product = [
   {
@@ -112,27 +113,12 @@ class Hall extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      colaborator: "",
-      customerName: "",
+      colaborator: '',
       order: [],
+      customerName: "",
       totalPrice: 0,
-      status: ""
-    }
-
-    firebaseAppAuth.onAuthStateChanged((user) => {
-      if (user) {
-        database.collection("team").doc(user.uid).get()
-          .then((doc) => {
-            console.log(doc.data().name)
-            this.setState({ colaborator: doc.data().name });
-          })
-      }
-      else {
-        console.log(" No user is signed in.")
-      }
-    })
-  };
-
+    };
+  }
 
   logOut = () => {
     firebase.auth().signOut().then(() => {
@@ -187,47 +173,15 @@ class Hall extends React.Component {
     }
   };
 
-  sendOrder = () => {
-    const { colaborator, customerName, order, status } = this.state;
-    const finalOrder = {
-      colaborator,
-      customerName,
-      order,
-      status
-    }
-    database.collection('orders').add(finalOrder);
-    this.setState({
-      order: [],
-      customerName: "",
-      totalPrice: 0,
-      status: ""
-    });
-
-    alert("Pedido enviado")
-    this.statusOrder(finalOrder)
-  }
-
-  statusOrder = (finalOrder) => {
-    console.log(finalOrder.customerName)
-    // database.collection('orders').doc().get()
-    // .then {
-      
-    // }
-
-  }
-
   render() {
-    const totalPrice = this.state.order.reduce((acc, cur) => {
-      return acc + (cur.amount * cur.price)
-    }, 0);
-
+    const classes = useStyles;
+    const theme = useTheme;
 
     return (
-      <div className={classes.root}>
+      <div className={classes.root} >
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Paper className={classes.paper}>
-              {this.state.colaborator}
               <TextField
                 type="text"
                 value={this.state.customerName}
@@ -240,39 +194,31 @@ class Hall extends React.Component {
             <Paper className={classes.paper}>
               <AppBar position="static" color="default">
                 <Tabs
-                  value={0}
-                  onChange={(e) => this.handleChange(e, "tab")}
-                  indicatorColor="primary"
-                  textColor="primary"
+                  onChange={this.handleChange}
                   variant="fullWidth"
-                >
+                  indicatorColor="primary"
+                  textColor="primary"  >
                   <Tab label="Café da breakfest" />
                   <Tab label="Geral" />
                 </Tabs>
               </AppBar>
-              <SwipeableViews
-                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                index={this.state.tab}
-                onChangeIndex={(e) => this.handleChange(e, "tab")}
-              >
-                <TabContainer value={0} dir={theme.direction}> {
-                  product.map((product, i) => {
-                    if (product.menu === "breakfest") {
-                      return <Button variant="contained"
-                        onClick={() => this.selectItem(product)}> {product.name}<br></br>R${product.price} </Button>
-                    }
-                  })
-                }
-                </TabContainer>
-                <TabContainer value={1} dir={theme.direction}> {
-                  product.map((product, i) => {
-                    if (product.menu === "day") {
-                      return <Button variant="contained" onClick={() => this.selectItem(product)} > {product.name}<br></br>{product.price} </Button>
-                    }
-                  })
-                }
-                </TabContainer>}
-              </SwipeableViews>
+              <TabContainer dir={theme.direction}> {
+                product.map((product, i) => {
+                  if (product.menu === "breakfest") {
+                    return <Button variant="contained"
+                      onClick={() => this.selectItem(product)}> {product.name}<br></br>R${product.price} </Button>
+                  }
+                })
+              }
+              </TabContainer>
+              <TabContainer dir={theme.direction}> {
+                product.map((product, i) => {
+                  if (product.menu === "day") {
+                    return <Button variant="contained" onClick={() => this.selectItem(product)} > {product.name}<br></br>{product.price} </Button>
+                  }
+                })
+              }
+              </TabContainer>}
             </Paper>
           </Grid>
           <Grid item xs={6}>
@@ -297,30 +243,17 @@ class Hall extends React.Component {
                 })
               }
               </List>
-              <Typography variant="h6" className={classes.title}>
-                {<>   R${totalPrice}
-                </>}
-              </Typography>
             </Paper>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={this.sendOrder}
-            > Enviar
+            <Button variant="contained" color="primary" className={classes.button}> Enviar
          <Icon className={classes.rightIcon}></Icon>
             </Button>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}> 
-            <Typography variant="h6" className={classes.title}> olá { this.statusOrder}
-            </Typography>
-          </Paper>
-        </Grid>
       </div>
-    );
-  }
+    )
+  };
 }
 
 export default Hall;
+
+
