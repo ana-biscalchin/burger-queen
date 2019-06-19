@@ -1,51 +1,75 @@
 import React from 'react';
-import PropTypes from "prop-types";
-// import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
- 
-const TabContainer = ({ children, dir }) => {
-  return (
+import firebase from '../firebaseConfig'
 
-    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
-      {children}
-    </Typography>
-  );
+const database = firebase.firestore();
+const firebaseAppAuth = firebase.auth();
+
+class KitchenControl extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+  
+      colaborator: "",
+      customerName: "",
+      order: [],
+      status: ""
+    }
+    firebaseAppAuth.onAuthStateChanged((user) => {
+      if (user) {
+        database.collection("team").doc(user.uid).get()
+          .then((doc) => {
+            console.log(doc.data().name)
+            this.setState({ colaborator: doc.data().name });
+          })
+      }
+      else {
+        console.log(" No user is signed in.")
+      }
+    })
+  };
+
+  la = () => {
+    database.collection("orders").where("status", "==", "open")
+    .onSnapshot(function(querySnapshot) {
+      let openOrder = [];
+      querySnapshot.forEach(function(doc) {
+        openOrder.push(doc.data())
+        console.log(openOrder);
+      })
+    });
+  }
+
+  pub = ( ) => {
+
+    this.status.openOrder.map((item, i) => {
+      console.log(item.customerName)
+      return item.customerName 
+    })
+
+  }
+
+
+  render() {
+
+
+  this.la()
+
+    return (
+
+    <div>
+       {this.state.colaborator}
+
+       <span> {this.pub }
+      </span>
+      
+    </div>
+
+    )
+  }
+
 }
 
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired
-};
-
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     backgroundColor: theme.palette.background.paper,
-//     flexGrow: 2,
-//   }
-// }));
-
-function KitchenControl() {
-    // const classes = useStyles();
-    // const theme = useTheme();
-    // const [value, setValue] = React.useState(0);
-  
-    // function handleChange(event, newValue) {
-    //   setValue(newValue);
-    // }
-  
-    // function handleChangeIndex(index) {
-    //   setValue(index);
-    // }
-  
-    return (
-        <div> 
-        <p>
-        Cozinha</p>
-</div>
-  
-    );
-  }
-  
-  export default KitchenControl;
+export default KitchenControl;
 
 

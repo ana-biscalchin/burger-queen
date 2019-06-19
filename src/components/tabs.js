@@ -7,7 +7,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 
-function TabContainer({ children, dir }) {
+export function TabContainer({ children, dir }) {
   return (
     <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
       {children}
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FullWidthTabs() {
+export default function FullWidthTabs({ children, titles }) {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -50,9 +50,11 @@ export default function FullWidthTabs() {
           textColor="primary"
           variant="fullWidth"
         >
-          <Tab label="Item One" />
-          <Tab label="Item Two" />
-           
+          {
+              titles.length > 0 && (
+                  titles.map( title => <Tab label={title} /> )
+              )
+          }
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -60,9 +62,7 @@ export default function FullWidthTabs() {
         index={value}
         onChangeIndex={handleChangeIndex}
       >
-        <TabContainer dir={theme.direction}>Item One</TabContainer>
-        <TabContainer dir={theme.direction}>Item Two</TabContainer>
-      
+        { children }
       </SwipeableViews>
     </div>
   );

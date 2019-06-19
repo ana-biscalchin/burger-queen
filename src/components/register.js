@@ -42,15 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const waiterName = firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    // User is signed in.
-    const displayName = user.displayName
-  } else {
-    // User is signed out.
-    // ...
-  }
-});
+
 
 class Register extends React.Component {
   constructor(props) {

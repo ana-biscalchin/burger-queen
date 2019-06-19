@@ -1,39 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
+import firebase from '../firebaseConfig'
+import FullWidthTabs from './tabs';
+import { TabContainer } from './tabs';
+
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Icon from '@material-ui/core/Icon';
 
-import firebase from '../firebaseConfig';
 const database = firebase.firestore();
 const firebaseAppAuth = firebase.auth();
-
-
-function TabContainer({ children, dir }) {
-  return (
-    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
-      {children}
-    </Typography>
-  );
-}
-
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired,
-};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,9 +24,6 @@ const useStyles = makeStyles(theme => ({
     width: 500,
   },
 }));
-
-const classes = useStyles;
-const theme = useTheme;
 
 const product = [
   {
@@ -116,7 +96,7 @@ class Hall extends React.Component {
       customerName: "",
       order: [],
       totalPrice: 0,
-      status: ""
+      status: "open"
     }
 
     firebaseAppAuth.onAuthStateChanged((user) => {
@@ -132,7 +112,6 @@ class Hall extends React.Component {
       }
     })
   };
-
 
   logOut = () => {
     firebase.auth().signOut().then(() => {
@@ -187,6 +166,12 @@ class Hall extends React.Component {
     }
   };
 
+  totalPrice = () => {
+    this.state.order.reduce((acc, cur) => {
+      return acc + (cur.amount * cur.price)
+    }, 0);
+  }
+
   sendOrder = () => {
     const { colaborator, customerName, order, status } = this.state;
     const finalOrder = {
@@ -195,32 +180,22 @@ class Hall extends React.Component {
       order,
       status
     }
+   
     database.collection('orders').add(finalOrder);
     this.setState({
       order: [],
       customerName: "",
       totalPrice: 0,
-      status: ""
-    });
+   });
 
     alert("Pedido enviado")
-    this.statusOrder(finalOrder)
+    
   }
-
-  statusOrder = (finalOrder) => {
-    console.log(finalOrder.customerName)
-    // database.collection('orders').doc().get()
-    // .then {
-      
-    // }
-
-  }
-
+ 
+ 
   render() {
-    const totalPrice = this.state.order.reduce((acc, cur) => {
-      return acc + (cur.amount * cur.price)
-    }, 0);
-
+    const classes = useStyles;
+    const theme = useTheme;
 
     return (
       <div className={classes.root}>
@@ -238,23 +213,15 @@ class Hall extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>
-              <AppBar position="static" color="default">
-                <Tabs
-                  value={0}
-                  onChange={(e) => this.handleChange(e, "tab")}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  variant="fullWidth"
-                >
-                  <Tab label="Café da breakfest" />
-                  <Tab label="Geral" />
-                </Tabs>
-              </AppBar>
-              <SwipeableViews
-                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                index={this.state.tab}
-                onChangeIndex={(e) => this.handleChange(e, "tab")}
-              >
+              <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
+                <TabContainer value={1} dir={theme.direction}> {
+                  product.map((product, i) => {
+                    if (product.menu === "day") {
+                      return <Button variant="contained" onClick={() => this.selectItem(product)} > {product.name}<br></br>{product.price} </Button>
+                    }
+                  })
+                }
+                </TabContainer>
                 <TabContainer value={0} dir={theme.direction}> {
                   product.map((product, i) => {
                     if (product.menu === "breakfest") {
@@ -263,16 +230,8 @@ class Hall extends React.Component {
                     }
                   })
                 }
-                </TabContainer>
-                <TabContainer value={1} dir={theme.direction}> {
-                  product.map((product, i) => {
-                    if (product.menu === "day") {
-                      return <Button variant="contained" onClick={() => this.selectItem(product)} > {product.name}<br></br>{product.price} </Button>
-                    }
-                  })
-                }
-                </TabContainer>}
-              </SwipeableViews>
+                  </TabContainer>}
+              </FullWidthTabs>
             </Paper>
           </Grid>
           <Grid item xs={6}>
@@ -298,7 +257,7 @@ class Hall extends React.Component {
               }
               </List>
               <Typography variant="h6" className={classes.title}>
-                {<>   R${totalPrice}
+                {<> R${this.totalPrice}
                 </>}
               </Typography>
             </Paper>
@@ -308,17 +267,16 @@ class Hall extends React.Component {
               className={classes.button}
               onClick={this.sendOrder}
             > Enviar
-         <Icon className={classes.rightIcon}></Icon>
             </Button>
           </Grid>
         </Grid>
         <Grid item xs={6}>
-          <Paper className={classes.paper}> 
-            <Typography variant="h6" className={classes.title}> olá { this.statusOrder}
+          <Paper className={classes.paper}>
+            <Typography variant="h6" className={classes.title}> olá {this.statusOrder}
             </Typography>
           </Paper>
         </Grid>
-      </div>
+      </div >
     );
   }
 }
