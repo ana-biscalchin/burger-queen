@@ -1,10 +1,10 @@
 import React from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import Register from "./register";
-import Login from "./login";
-import FullWidthTabs from "./tabs";
-import { TabContainer } from "./tabs";
+import Register from "../components/register";
+import Login from "../components/login";
+import FullWidthTabs from "../components/tabs";
+import { TabContainer } from "../components/tabs";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,10 +22,10 @@ function Home(props) {
       <Container component="main" maxWidth="xs">
         <FullWidthTabs titles={["LOGIN", "CADASTRO "]}>
           <TabContainer value={0} dir={theme.direction}>
-            <Register />
+            <Login history={props.history} />
           </TabContainer>
           <TabContainer value={1} dir={theme.direction}>
-            <Login history={props.history} />
+            <Register />
           </TabContainer>
         </FullWidthTabs>
       </Container>

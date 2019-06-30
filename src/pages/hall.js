@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from '../firebaseConfig'
-import FullWidthTabs from './tabs';
-import { TabContainer } from './tabs';
+import FullWidthTabs from '../components/tabs';
+import { TabContainer } from '../components/tabs';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from "@material-ui/core/Grid";
