@@ -1,22 +1,19 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import firebase from '../firebaseConfig';
+import withFirebaseAuth from 'react-with-firebase-auth';
 
-// import firebase from './src/firebaseConfig';
-// eslint-disable-next-line
-// const database = firebase.firestore();
-
-
+const firebaseAppAuth = firebase.auth();
+const database = firebase.firestore();
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -34,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -42,59 +39,70 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      email: "",
       password: "",
-      listItem: []
     };
   }
+
+  signIn = () => {
+    this.props.signInWithEmailAndPassword(
+      this.state.email,
+      this.state.password,
+    )
+      .then(() => {
+        console.log(this.props)
+        database.collection('team').doc(this.props.user.uid).get()
+          .then( (doc) => {
+            console.log(doc.data().local)
+            this.props.history.push(`/${doc.data().local}`)
+          })
+      })
+  }
+
+
+  // firebase.auth().sendPasswordResetEmail(
+  //   'user@example.com', actionCodeSettings)
+  //   .then(function() {
+  //     // Password reset email sent.
+  //   })
+  //   .catch(function(error) {
+  //     // Error occurred. Inspect error.code.
+  //   });
+
+
   handleChange = (event, element) => {
     const newState = this.state;
     newState[element] = event.target.value
     this.setState(newState)
-  }
-  handleClick = (event) => {
-    this.setState({
-      listItem: this.state.listItem.concat({
-        email: this.state.email,
-        password: this.state.password
-      }),
-    })
   };
 
   render() {
-    const { name, password, listItem  } = this.state
     const classes = useStyles;
-
     return (
-
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
           <Typography component="h1" variant="h5">
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
-              value={name}
-              onChange={(e) => this.handleChange(e, "name")}
+              value={this.state.name}
+              onChange={(e) => this.handleChange(e, "email")}
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              id="name"
-              label="Nome"
-              name="name"
+              id="email"
+              label="Email"
+              name="email"
               autoFocus
             />
             <TextField
-              value={password}
+              value={this.state.password}
               onChange={(e) => this.handleChange(e, "password")}
               variant="outlined"
               margin="normal"
@@ -106,37 +114,20 @@ class Login extends React.Component {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="salao" color="primary" />}
-              label="Salão"
-
-            />
-            <FormControlLabel
-              control={<Checkbox value="cozinha" color="primary" />}
-              label="Cozinha"
-              
-
-            />
             <Button
-              type="submit"
-              onClick={this.handleClick}
+              onClick={this.signIn}
+              text="Entrar"
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
-              {
-                ...listItem.map(item => {
-                  return <p key={item.email}>{item.email} | {item.password}</p>
-                })
-              }
             >
               Entrar
-          </Button>
+               </Button>
             <Grid container>
               <Grid item md>
                 <Link href="#" variant="body2">
                   Esqueceu a senha?
-              </Link>
+                </Link>
               </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
@@ -149,6 +140,12 @@ class Login extends React.Component {
 
       </Container >
     );
-}}
+  };
+}
 
-export default Login;
+export default compose(
+  withFirebaseAuth({
+    firebaseAppAuth,
+  }),
+  withRouter,
+)(Login);
