@@ -2,7 +2,6 @@ import React from 'react';
 import firebase from '../firebaseConfig'
 import FullWidthTabs from './tabs';
 import { TabContainer } from './tabs';
-
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from "@material-ui/core/Grid";
@@ -191,8 +190,6 @@ class Hall extends React.Component {
     alert("Pedido enviado")
     
   }
- 
- 
   render() {
     const classes = useStyles;
     const theme = useTheme;
@@ -230,7 +227,7 @@ class Hall extends React.Component {
                     }
                   })
                 }
-                  </TabContainer>}
+                  </TabContainer>
               </FullWidthTabs>
             </Paper>
           </Grid>
@@ -277,8 +274,9 @@ class Hall extends React.Component {
           </Paper>
         </Grid>
       </div >
-    );
-  }
+    )
+  };
 }
+
 
 export default Hall;
