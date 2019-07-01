@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import React from "react";
+import PropTypes from "prop-types";
+import SwipeableViews from "react-swipeable-views";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
 
 export function TabContainer({ children, dir }) {
   return (
@@ -17,14 +17,15 @@ export function TabContainer({ children, dir }) {
 
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired,
+  dir: PropTypes.string.isRequired
 };
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     width: 500,
-  },
+    flexGrow: 1
+  }
 }));
 
 export default function FullWidthTabs({ children, titles }) {
@@ -42,7 +43,7 @@ export default function FullWidthTabs({ children, titles }) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
+      <AppBar position="static" style={{ width: "100%" }} color="default">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -50,19 +51,15 @@ export default function FullWidthTabs({ children, titles }) {
           textColor="primary"
           variant="fullWidth"
         >
-          {
-              titles.length > 0 && (
-                  titles.map( title => <Tab label={title} /> )
-              )
-          }
+          {titles.length > 0 && titles.map(title => <Tab label={title} />)}
         </Tabs>
       </AppBar>
       <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
         onChangeIndex={handleChangeIndex}
       >
-        { children }
+        {children}
       </SwipeableViews>
     </div>
   );

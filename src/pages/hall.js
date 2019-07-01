@@ -1,18 +1,19 @@
-import React from 'react';
-import firebase from '../firebaseConfig'
-import FullWidthTabs from '../components/tabs';
-import { TabContainer } from '../components/tabs';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import React from "react";
+import firebase from "../firebaseConfig";
+import FullWidthTabs from "../components/tabs";
+import { TabContainer } from "../components/tabs";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import DeleteIcon from '@material-ui/icons/Delete';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import DeleteIcon from "@material-ui/icons/Delete";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import SimpleModal from "../components/modal";
 
 const database = firebase.firestore();
 const firebaseAppAuth = firebase.auth();
@@ -20,8 +21,8 @@ const firebaseAppAuth = firebase.auth();
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-    width: 500,
-  },
+    width: 500
+  }
 }));
 
 const product = [
@@ -94,60 +95,66 @@ class Hall extends React.Component {
       colaborator: "",
       customerName: "",
       order: [],
+      status: "open",
       totalPrice: 0,
-      status: "open"
-    }
+      time: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
-    firebaseAppAuth.onAuthStateChanged((user) => {
+    firebaseAppAuth.onAuthStateChanged(user => {
       if (user) {
-        database.collection("team").doc(user.uid).get()
-          .then((doc) => {
-            console.log(doc.data().name)
+        database
+          .collection("team")
+          .doc(user.uid)
+          .get()
+          .then(doc => {
+            console.log(doc.data().name);
             this.setState({ colaborator: doc.data().name });
-          })
+          });
+      } else {
+        console.log(" No user is signed in.");
       }
-      else {
-        console.log(" No user is signed in.")
-      }
-    })
-  };
+    });
+  }
 
   logOut = () => {
-    firebase.auth().signOut().then(() => {
-      this.props.history.push(`/`);
-    })
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        this.props.history.push(`/`);
+      });
   };
 
   handleChange = (event, element) => {
     const newState = this.state;
-    newState[element] = event.target.value
-    this.setState(newState)
+    newState[element] = event.target.value;
+    this.setState(newState);
   };
 
-  selectItem = (item) => {
-    const itemIndex = this.state.order.findIndex((product) => {
+  selectItem = item => {
+    const itemIndex = this.state.order.findIndex(product => {
       return product.name === item.name;
     });
     if (itemIndex < 0) {
       const newItem = {
         ...item,
         amount: 1
-      }
+      };
       this.setState({
         order: this.state.order.concat(newItem)
-      })
+      });
     } else {
       let addItem = this.state.order;
       addItem[itemIndex].amount += 1;
       this.setState({
         order: addItem
       });
-      console.log(this.state.order)
+      console.log(this.state.order);
     }
   };
 
-  deleteItem = (item) => {
-    const itemIndex = this.state.order.findIndex((product) => {
+  deleteItem = item => {
+    const itemIndex = this.state.order.findIndex(product => {
       return product.name === item.name;
     });
     let removeItem = this.state.order;
@@ -165,35 +172,51 @@ class Hall extends React.Component {
     }
   };
 
-  totalPrice = () => {
-    this.state.order.reduce((acc, cur) => {
-      return acc + (cur.amount * cur.price)
-    }, 0);
-  }
-
   sendOrder = () => {
-    const { colaborator, customerName, order, status } = this.state;
+    const {
+      colaborator,
+      customerName,
+      order,
+      status,
+      totalPrice,
+      time
+    } = this.state;
     const finalOrder = {
       colaborator,
       customerName,
       order,
-      status
-    }
-   
-    database.collection('orders').add(finalOrder);
+      status,
+      totalPrice,
+      time
+    };
+    database.collection("orders").add(finalOrder);
     this.setState({
       order: [],
       customerName: "",
       totalPrice: 0,
-   });
+      time: ""
+    });
 
-    alert("Pedido enviado")
-    
-  }
+    alert("Pedido enviado");
+  };
+
+ setTotalPrice = () => {
+   let total = this.state.order.reduce((acc, cur) => {
+    return acc + (cur.amount * cur.price)
+   }, 0)
+   
+   this.setState({ totalPrice: total });
+ }
+ 
+
+
+
   render() {
     const classes = useStyles;
     const theme = useTheme;
-
+    const totalPrice = this.state.order.reduce((acc, cur) => {
+      return acc + cur.amount * cur.price;
+    }, 0);
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
@@ -204,58 +227,95 @@ class Hall extends React.Component {
                 type="text"
                 value={this.state.customerName}
                 placeholder="Digite o nome do cliente"
-                onChange={(e) => this.handleChange(e, "customerName")}
+                onChange={e => this.handleChange(e, "customerName")}
               />
-              <Button onClick={this.logOut}>Sair</Button>  </Paper>
+              <Button onClick={this.logOut}>Sair</Button>{" "}
+            </Paper>
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>
               <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
-                <TabContainer value={1} dir={theme.direction}> {
-                  product.map((product, i) => {
+                <TabContainer value={1} dir={theme.direction}>
+                  {" "}
+                  {product.map((product, i) => {
+                    if (
+                      (product.menu === "day" &&
+                        product.name === "HAMBÚRGUER DUPLO") ||
+                      product.name === "HAMBÚRGUER SIMPLES"
+                    ) {
+                      return (
+                        <Button
+                          variant="contained"
+                          onClick={() => this.selectItem(product)}
+                        >
+                          {product.name}
+                          <br />
+                          {product.price} <SimpleModal />
+                        </Button>
+                      );
+                    }
                     if (product.menu === "day") {
-                      return <Button variant="contained" onClick={() => this.selectItem(product)} > {product.name}<br></br>{product.price} </Button>
+                      return (
+                        <Button
+                          key={i}
+                          variant="contained"
+                          onClick={() => this.selectItem(product)}
+                        >
+                          {product.name}
+                          <br />
+                          {product.price}{" "}
+                        </Button>
+                      );
                     }
-                  })
-                }
+                  })}
                 </TabContainer>
-                <TabContainer value={0} dir={theme.direction}> {
-                  product.map((product, i) => {
+                <TabContainer value={0} dir={theme.direction}>
+                  {" "}
+                  {product.map((product, i) => {
                     if (product.menu === "breakfest") {
-                      return <Button variant="contained"
-                        onClick={() => this.selectItem(product)}> {product.name}<br></br>R${product.price} </Button>
+                      return (
+                        <Button
+                          key={i}
+                          variant="contained"
+                          onClick={() => this.selectItem(product)}
+                        >
+                          {product.name}
+                          <br />
+                          R${product.price}
+                        </Button>
+                      );
                     }
-                  })
-                }
-                  </TabContainer>
+                  })}
+                </TabContainer>
               </FullWidthTabs>
             </Paper>
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>
               <Typography variant="h6" className={classes.title}>
-                {<>  {this.state.customerName}
-                </>}
+                {<> {this.state.customerName}</>}
               </Typography>
             </Paper>
             <Paper className={classes.paper}>
-              <List > {
-                this.state.order.map((product, i) => {
+              <List>
+                {" "}
+                {this.state.order.map((product, i) => {
                   return (
-                    <ListItem key={i} >
+                    <ListItem key={i}>
                       <ListItemIcon>
                         <DeleteIcon onClick={() => this.deleteItem(product)} />
                       </ListItemIcon>
-                      <ListItemText > {product.amount} - {product.name} - {`R$ ${product.price},00`} - Total
+                      <ListItemText>
+                        {" "}
+                        {product.amount} - {product.name} -{" "}
+                        {`R$ ${product.price},00`} - Total
                       </ListItemText>
                     </ListItem>
                   );
-                })
-              }
+                })}
               </List>
               <Typography variant="h6" className={classes.title}>
-                {<> R${this.totalPrice}
-                </>}
+                R$ {totalPrice}{" "}
               </Typography>
             </Paper>
             <Button
@@ -263,20 +323,23 @@ class Hall extends React.Component {
               color="primary"
               className={classes.button}
               onClick={this.sendOrder}
-            > Enviar
+            >
+              {" "}
+              Enviar
             </Button>
           </Grid>
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper}>
-            <Typography variant="h6" className={classes.title}> olá {this.statusOrder}
+            <Typography variant="h6" className={classes.title}>
+              {" "}
+              olá {this.statusOrder}
             </Typography>
           </Paper>
         </Grid>
-      </div >
-    )
-  };
+      </div>
+    );
+  }
 }
-
 
 export default Hall;

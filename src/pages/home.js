@@ -9,7 +9,8 @@ import { TabContainer } from "../components/tabs";
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-    flexGrow: 2
+    flexGrow: 1,
+    marginTop: 80
   }
 }));
 
@@ -19,7 +20,7 @@ function Home(props) {
 
   return (
     <div className={classes.root}>
-      <Container component="main" maxWidth="xs">
+      <Container spacing="2" component="main" maxWidth="xs">
         <FullWidthTabs titles={["LOGIN", "CADASTRO "]}>
           <TabContainer value={0} dir={theme.direction}>
             <Login history={props.history} />
