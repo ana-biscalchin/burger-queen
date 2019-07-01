@@ -7,8 +7,7 @@ import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
-    
+    backgroundColor: theme.palette.background.paper
   }
 }));
 
@@ -22,7 +21,8 @@ class KitchenControl extends React.Component {
       colaborator: "",
       customerName: "",
       ordersOpened: [],
-      status: ""
+      status: "",
+      closeTime: ""
     };
     firebaseAppAuth.onAuthStateChanged(user => {
       if (user) {
@@ -51,49 +51,86 @@ class KitchenControl extends React.Component {
   };
 
   getOrders = () => {
-    const receive = database.collection("orders").where("status", "==", "open");
-    receive.get().then(querySnapshot => {
-      if (querySnapshot.docs.length > 0) {
-        let orders = [];
-        querySnapshot.forEach(function(doc) {
-          orders.push(doc.data());
+    database
+      .collection("orders")
+      .where("status", "==", "open")
+      .get()
+      .then(querySnapshot => {
+        let cardData = [];
+        querySnapshot.forEach(doc => {
+          let obj = Object.assign({}, doc.data(), { id: doc.id });
+          cardData.push(obj);
         });
+        console.log(cardData);
         this.setState({
-          ordersOpened: orders
+          ordersOpened: cardData
         });
-        console.log(this.state.ordersOpened);
-      }
-    });
+       
+      });
   };
+  closeOrder = (info) => {
+    console.log(info)
+  database.collection("orders").doc(info).update({ status: "close" });
+
+  }
+   
+    // let x = this.state.ordersOpened.map(elem => {
+    //   if (elem.openTime === timeStamp) {
+    //     elem.status = "close";
+    //     return elem;
+    //   } else {
+    //     return elem;
+    //   }
+    // });
+    // console.log(x)
+    // this.setState(
+    //   x
+    // );
+ 
+
+  // let y = this.state.ordersOpened.map(
+
+  //   )
 
   render() {
+   
+
     const classes = useStyles;
     const theme = useTheme;
     return (
       <div>
-      <Paper className={classes.paper}> Olá {this.state.colaborator}, esses são os pedidos em aberto:
-        <Button onClick={this.logOut}>Sair</Button>
-      </Paper>
-      <Paper className={classes.paper}> {  
-        this.state.ordersOpened.map(order => {
-          return (
-            <Card key={order.orderNumber}> 
-              {order.customerName}
-              {order.order.map((item, index) => {
-                return (
-                <p key={index}> {item.name}</p>
-                )
-              })}
-              <Button > {order.status} </Button>
-            </Card>
-          )
-        })
-      } </Paper>
+        <Paper className={classes.paper}>
+          {" "}
+          Olá {this.state.colaborator}, esses são os pedidos em aberto:
+          <Button onClick={this.logOut}>Sair</Button>
+        </Paper>
+        <Paper className={classes.paper}>
+          {this.state.ordersOpened.map((item, index) => {
+            return (
+              <Card key={index} >
+                
+                {item.customerName}
+
+                {item.order.map((item, index) => {
+                  return <p key={index}> {item.name}</p>;
+                })}
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => this.closeOrder(item.id)}
+                >
+                  {" "}
+                  Aberto{" "}
+                </Button>
+              </Card>
+            );
+          })}
+        </Paper>
       </div>
-    )
+    );
   }
-}  
+}
 
-export default KitchenControl
-
-
+export default KitchenControl;

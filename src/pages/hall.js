@@ -97,7 +97,7 @@ class Hall extends React.Component {
       order: [],
       status: "open",
       totalPrice: 0,
-      time: firebase.firestore.FieldValue.serverTimestamp()
+      openTime: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     firebaseAppAuth.onAuthStateChanged(user => {
@@ -179,7 +179,7 @@ class Hall extends React.Component {
       order,
       status,
       totalPrice,
-      time
+      openTime
     } = this.state;
     const finalOrder = {
       colaborator,
@@ -187,7 +187,7 @@ class Hall extends React.Component {
       order,
       status,
       totalPrice,
-      time
+      openTime
     };
     database.collection("orders").add(finalOrder);
     this.setState({
@@ -200,16 +200,13 @@ class Hall extends React.Component {
     alert("Pedido enviado");
   };
 
- setTotalPrice = () => {
-   let total = this.state.order.reduce((acc, cur) => {
-    return acc + (cur.amount * cur.price)
-   }, 0)
-   
-   this.setState({ totalPrice: total });
- }
- 
+  setTotalPrice = () => {
+    let total = this.state.order.reduce((acc, cur) => {
+      return acc + cur.amount * cur.price;
+    }, 0);
 
-
+    this.setState({ totalPrice: total });
+  };
 
   render() {
     const classes = useStyles;
