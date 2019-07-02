@@ -14,6 +14,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import SimpleModal from "../components/modal";
+import Card from "@material-ui/core/Card";
+
 
 const database = firebase.firestore();
 const firebaseAppAuth = firebase.auth();
@@ -94,9 +96,9 @@ class Hall extends React.Component {
     this.state = {
       colaborator: "",
       customerName: "",
+      closedOrders: [], 
       order: [],
       status: "open",
-      totalPrice: 0,
       openTime: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -114,6 +116,8 @@ class Hall extends React.Component {
         console.log(" No user is signed in.");
       }
     });
+
+   this.getClosedOrders()
   }
 
   logOut = () => {
@@ -178,7 +182,6 @@ class Hall extends React.Component {
       customerName,
       order,
       status,
-      totalPrice,
       openTime
     } = this.state;
     const finalOrder = {
@@ -186,26 +189,40 @@ class Hall extends React.Component {
       customerName,
       order,
       status,
-      totalPrice,
       openTime
     };
     database.collection("orders").add(finalOrder);
     this.setState({
       order: [],
       customerName: "",
-      totalPrice: 0,
       time: ""
     });
 
     alert("Pedido enviado");
   };
 
-  setTotalPrice = () => {
-    let total = this.state.order.reduce((acc, cur) => {
-      return acc + cur.amount * cur.price;
-    }, 0);
+  getClosedOrders = () => {
+    database
+      .collection("orders")
+      .where("status", "==", "close")
+      .onSnapshot((querySnapshot) =>  { 
+        let cardData = [];
+        querySnapshot.forEach(doc => { 
+          let obj = Object.assign({}, doc.data(), { id: doc.id });
+          cardData.push(obj);
+        });
+        console.log(cardData);
+        this.setState({
+          closedOrders: cardData
+        });
+      });
+  };
 
-    this.setState({ totalPrice: total });
+  concludeOrder = (info) => {
+    database
+      .collection("orders")
+      .doc(info)
+      .update({ status: "conclude" });
   };
 
   render() {
@@ -214,6 +231,7 @@ class Hall extends React.Component {
     const totalPrice = this.state.order.reduce((acc, cur) => {
       return acc + cur.amount * cur.price;
     }, 0);
+    
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
@@ -230,7 +248,7 @@ class Hall extends React.Component {
             </Paper>
           </Grid>
           <Grid item xs={6}>
-            <Paper className={classes.paper}>
+            <Paper classNersame={classes.paper}>
               <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
                 <TabContainer value={1} dir={theme.direction}>
                   {" "}
@@ -329,9 +347,26 @@ class Hall extends React.Component {
         <Grid item xs={6}>
           <Paper className={classes.paper}>
             <Typography variant="h6" className={classes.title}>
-              {" "}
-              olá {this.statusOrder}
-            </Typography>
+            </Typography>  
+            {this.state.closedOrders.map((item, index) => {
+            return (
+              <Card key={index} >
+                {item.customerName}
+                {item.order.map((item, index) => {
+                  return <p key={index}> {item.name}</p>;
+                })}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => this.concludeOrder(item.id)}
+                >
+                  {" "}
+                  Entregue{" "}
+                </Button>
+              </Card>
+            );
+          })}
           </Paper>
         </Grid>
       </div>

@@ -20,7 +20,7 @@ class KitchenControl extends React.Component {
     this.state = {
       colaborator: "",
       customerName: "",
-      ordersOpened: [],
+      openedOrders: [],
       status: "",
       closeTime: ""
     };
@@ -38,7 +38,7 @@ class KitchenControl extends React.Component {
         console.log(" No user is signed in.");
       }
     });
-    this.getOrders();
+    this.getOpenOrders();
   }
 
   logOut = () => {
@@ -50,12 +50,11 @@ class KitchenControl extends React.Component {
       });
   };
 
-  getOrders = () => {
+  getOpenOrders = () => {
     database
       .collection("orders")
       .where("status", "==", "open")
-      .get()
-      .then(querySnapshot => {
+      .onSnapshot(querySnapshot => {
         let cardData = [];
         querySnapshot.forEach(doc => {
           let obj = Object.assign({}, doc.data(), { id: doc.id });
@@ -63,38 +62,19 @@ class KitchenControl extends React.Component {
         });
         console.log(cardData);
         this.setState({
-          ordersOpened: cardData
+          openedOrders: cardData
         });
-       
       });
   };
+
   closeOrder = (info) => {
-    console.log(info)
-  database.collection("orders").doc(info).update({ status: "close" });
-
-  }
-   
-    // let x = this.state.ordersOpened.map(elem => {
-    //   if (elem.openTime === timeStamp) {
-    //     elem.status = "close";
-    //     return elem;
-    //   } else {
-    //     return elem;
-    //   }
-    // });
-    // console.log(x)
-    // this.setState(
-    //   x
-    // );
- 
-
-  // let y = this.state.ordersOpened.map(
-
-  //   )
+    database
+      .collection("orders")
+      .doc(info)
+      .update({ status: "close" });
+  };
 
   render() {
-   
-
     const classes = useStyles;
     const theme = useTheme;
     return (
@@ -105,16 +85,13 @@ class KitchenControl extends React.Component {
           <Button onClick={this.logOut}>Sair</Button>
         </Paper>
         <Paper className={classes.paper}>
-          {this.state.ordersOpened.map((item, index) => {
+          {this.state.openedOrders.map((item, index) => {
             return (
-              <Card key={index} >
-                
+              <Card key={index}>
                 {item.customerName}
-
                 {item.order.map((item, index) => {
                   return <p key={index}> {item.name}</p>;
                 })}
-
                 <Button
                   variant="contained"
                   color="primary"
