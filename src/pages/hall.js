@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "../firebaseConfig";
 import FullWidthTabs from "../components/tabs";
 import { TabContainer } from "../components/tabs";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -15,7 +15,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import SimpleModal from "../components/modal";
 import Card from "@material-ui/core/Card";
-
+import Divider from '@material-ui/core/Divider';
 
 const database = firebase.firestore();
 const firebaseAppAuth = firebase.auth();
@@ -96,7 +96,7 @@ class Hall extends React.Component {
     this.state = {
       colaborator: "",
       customerName: "",
-      closedOrders: [], 
+      closedOrders: [],
       order: [],
       status: "open",
       openTime: firebase.firestore.FieldValue.serverTimestamp()
@@ -117,7 +117,7 @@ class Hall extends React.Component {
       }
     });
 
-   this.getClosedOrders()
+    this.getClosedOrders();
   }
 
   logOut = () => {
@@ -177,13 +177,7 @@ class Hall extends React.Component {
   };
 
   sendOrder = () => {
-    const {
-      colaborator,
-      customerName,
-      order,
-      status,
-      openTime
-    } = this.state;
+    const { colaborator, customerName, order, status, openTime } = this.state;
     const finalOrder = {
       colaborator,
       customerName,
@@ -205,9 +199,9 @@ class Hall extends React.Component {
     database
       .collection("orders")
       .where("status", "==", "close")
-      .onSnapshot((querySnapshot) =>  { 
+      .onSnapshot(querySnapshot => {
         let cardData = [];
-        querySnapshot.forEach(doc => { 
+        querySnapshot.forEach(doc => {
           let obj = Object.assign({}, doc.data(), { id: doc.id });
           cardData.push(obj);
         });
@@ -218,7 +212,7 @@ class Hall extends React.Component {
       });
   };
 
-  concludeOrder = (info) => {
+  concludeOrder = info => {
     database
       .collection("orders")
       .doc(info)
@@ -227,11 +221,10 @@ class Hall extends React.Component {
 
   render() {
     const classes = useStyles;
-    const theme = useTheme;
     const totalPrice = this.state.order.reduce((acc, cur) => {
       return acc + cur.amount * cur.price;
     }, 0);
-    
+
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
@@ -248,18 +241,19 @@ class Hall extends React.Component {
             </Paper>
           </Grid>
           <Grid item xs={6}>
-            <Paper classNersame={classes.paper}>
+            <Paper className={classes.paper}>
               <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
-                <TabContainer value={1} dir={theme.direction}>
+                <TabContainer value={1} >
                   {" "}
-                  {product.map((product, i) => {
+                  {product.map(product => {
                     if (
                       (product.menu === "day" &&
-                        product.name === "HAMBÚRGUER DUPLO") ||
+                      product.name === "HAMBÚRGUER DUPLO") ||
                       product.name === "HAMBÚRGUER SIMPLES"
                     ) {
                       return (
                         <Button
+                          key={product.name}
                           variant="contained"
                           onClick={() => this.selectItem(product)}
                         >
@@ -272,7 +266,7 @@ class Hall extends React.Component {
                     if (product.menu === "day") {
                       return (
                         <Button
-                          key={i}
+                          key={product.name}
                           variant="contained"
                           onClick={() => this.selectItem(product)}
                         >
@@ -284,7 +278,7 @@ class Hall extends React.Component {
                     }
                   })}
                 </TabContainer>
-                <TabContainer value={0} dir={theme.direction}>
+                <TabContainer value={0} >
                   {" "}
                   {product.map((product, i) => {
                     if (product.menu === "breakfest") {
@@ -295,7 +289,7 @@ class Hall extends React.Component {
                           onClick={() => this.selectItem(product)}
                         >
                           {product.name}
-                          <br />
+                          
                           R${product.price}
                         </Button>
                       );
@@ -329,7 +323,8 @@ class Hall extends React.Component {
                   );
                 })}
               </List>
-              <Typography variant="h6" className={classes.title}>
+              <Divider variant="middle" />
+              <Typography align="right" variant="h6" className={classes.title}>
                 R$ {totalPrice}{" "}
               </Typography>
             </Paper>
@@ -346,27 +341,26 @@ class Hall extends React.Component {
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper}>
-            <Typography variant="h6" className={classes.title}>
-            </Typography>  
+            <Typography variant="h6" className={classes.title} />
             {this.state.closedOrders.map((item, index) => {
-            return (
-              <Card key={index} >
-                {item.customerName}
-                {item.order.map((item, index) => {
-                  return <p key={index}> {item.name}</p>;
-                })}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => this.concludeOrder(item.id)}
-                >
-                  {" "}
-                  Entregue{" "}
-                </Button>
-              </Card>
-            );
-          })}
+              return (
+                <Card key={index}>
+                  {item.customerName}
+                  {item.order.map((item, index) => {
+                    return <p key={index}> {item.name}</p>;
+                  })}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    onClick={() => this.concludeOrder(item.id)}
+                  >
+                    {" "}
+                    Entregue{" "}
+                  </Button>
+                </Card>
+              );
+            })}
           </Paper>
         </Grid>
       </div>

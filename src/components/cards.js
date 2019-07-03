@@ -1,21 +1,35 @@
-{
-  this.state.closedOrders.map((item, index) => {
-    return (
-      <Card key={index}>
-        {item.customerName}
-        {item.order.map((item, index) => {
-          return <p key={index}> {item.name}</p>;
-        })}
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={() => this.closeOrder(item.id)}
-        >
-          {" "}
-          Entregue{" "}
-        </Button>
-      </Card>
-    );
-  });
+
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+
+const useStyles = makeStyles({
+  card: {
+    minWidth: 300,
+    maxWidth: 300,
+    margin: 4,
+    padding: 2
+  },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+});
+
+export default function SimpleCard({content}) {
+  const classes = useStyles();
+  const bull = <span className={classes.bullet}>•</span>;
+
+  return (
+    <Card className={classes.card}>
+      {content}
+    </Card>
+  );
 }

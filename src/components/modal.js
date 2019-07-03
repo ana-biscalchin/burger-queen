@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import Modal from "@material-ui/core/Modal";
+import Button from "@material-ui/core/Button";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -16,19 +15,19 @@ function getModalStyle() {
   return {
     top: `${top}%`,
     left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
+    transform: `translate(-${top}%, -${left}%)`
   };
 }
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    position: 'absolute',
+    position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(4),
-    outline: 'none',
-  },
+    outline: "none"
+  }
 }));
 
 function SimpleModal() {
@@ -47,7 +46,7 @@ function SimpleModal() {
 
   return (
     <div>
-      <Button onClick={handleOpen}></Button>
+      {/* <Button onClick={handleOpen} /> */}
       <Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
@@ -56,7 +55,7 @@ function SimpleModal() {
       >
         <div style={modalStyle} className={classes.paper}>
           <Typography variant="h6" id="modal-title">
-            Text in a modal
+            Escolha o sabor
           </Typography>
           <Typography variant="subtitle1" id="simple-modal-description">
             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
@@ -68,4 +67,4 @@ function SimpleModal() {
   );
 }
 
-export default SimpleModal 
+export default SimpleModal;

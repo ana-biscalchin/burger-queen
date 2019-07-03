@@ -45,6 +45,7 @@ export default function FullWidthTabs({ children, titles }) {
     <div className={classes.root}>
       <AppBar position="static" style={{ width: "100%" }} color="default">
         <Tabs
+          key={value}
           value={value}
           onChange={handleChange}
           indicatorColor="primary"

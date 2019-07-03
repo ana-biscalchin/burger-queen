@@ -1,9 +1,14 @@
-import React from "react";
+import React, { Fragment } from "react";
 import firebase from "../firebaseConfig";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
+import Box from "@material-ui/core/Box";
+import { makeStyles } from "@material-ui/core/styles";
+import SimpleCard from "../components/cards";
 import Button from "@material-ui/core/Button";
+import SimpleAppBar from "../components/navbar";
+import Typography from "@material-ui/core/Typography";
+
+import CardActions from "@material-ui/core/CardActions";
+import { display } from "@material-ui/system";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -67,7 +72,7 @@ class KitchenControl extends React.Component {
       });
   };
 
-  closeOrder = (info) => {
+  closeOrder = info => {
     database
       .collection("orders")
       .doc(info)
@@ -76,36 +81,63 @@ class KitchenControl extends React.Component {
 
   render() {
     const classes = useStyles;
-    const theme = useTheme;
     return (
-      <div>
-        <Paper className={classes.paper}>
-          {" "}
-          Olá {this.state.colaborator}, esses são os pedidos em aberto:
-          <Button onClick={this.logOut}>Sair</Button>
-        </Paper>
-        <Paper className={classes.paper}>
+      <>
+        <SimpleAppBar
+          conteudo={
+            <>
+              <Typography variant="h6" className={classes.title}>
+                {" "}
+                Olá {this.state.colaborator}, esses são os pedidos em aberto:{" "}
+              </Typography>
+              <Button onClick={this.logOut}>Sair</Button>
+            </>
+          }
+        />
+        <Box
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
+          p={4}
+          className={classes.paper}
+        >
           {this.state.openedOrders.map((item, index) => {
             return (
-              <Card key={index}>
-                {item.customerName}
-                {item.order.map((item, index) => {
-                  return <p key={index}> {item.name}</p>;
-                })}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => this.closeOrder(item.id)}
-                >
-                  {" "}
-                  Aberto{" "}
-                </Button>
-              </Card>
+              <SimpleCard
+                key={index}
+                content={
+                  <div>
+                    <Typography color="textSecondary" className={classes.title}>
+                      {item.customerName}
+                    </Typography>
+                    <Typography>
+                      {item.order.map((item, index) => {
+                        return (
+                          <p key={index}>
+                            {" "}
+                            {item.amount} - {item.name}{" "}
+                          </p>
+                        );
+                      })}
+                    </Typography>
+                    <CardActions>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}
+                        onClick={() => this.closeOrder(item.id)}
+                      >
+                        {" "}
+                        Fechar{" "}
+                      </Button>
+                    </CardActions>
+                  </div>
+                }
+              />
             );
           })}
-        </Paper>
-      </div>
+        </Box>
+      </>
     );
   }
 }
