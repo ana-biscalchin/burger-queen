@@ -5,7 +5,8 @@ import Toolbar from "@material-ui/core/Toolbar";
 
 const useStyles = makeStyles({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+
   }
 });
 
@@ -14,7 +15,7 @@ export default function SimpleAppBar({conteudo}) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
+      <AppBar  position="static" color="default">
         <Toolbar>
         {conteudo}
         </Toolbar>
