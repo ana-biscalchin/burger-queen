@@ -6,9 +6,7 @@ import SimpleCard from "../components/cards";
 import Button from "@material-ui/core/Button";
 import SimpleAppBar from "../components/navbar";
 import Typography from "@material-ui/core/Typography";
-
 import CardActions from "@material-ui/core/CardActions";
-import { display } from "@material-ui/system";
 
 const useStyles = makeStyles(theme => ({
   root: {

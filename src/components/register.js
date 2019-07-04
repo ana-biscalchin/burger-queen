@@ -85,7 +85,7 @@ class Register extends React.Component {
     const newState = this.state;
     newState[element] = event.target.value
     this.setState(newState)
-   }
+  }
 
   render() {
     const classes = useStyles;
@@ -156,7 +156,7 @@ class Register extends React.Component {
               color="primary"
             >
               Cadastrar
-             </Button>
+            </Button>
           </form>
         </div >
       </Container >

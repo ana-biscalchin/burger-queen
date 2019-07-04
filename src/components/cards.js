@@ -5,7 +5,7 @@ import Card from '@material-ui/core/Card';
 
 const useStyles = makeStyles({
   card: {
-    minWidth: 300,
+    
     maxWidth: 300,
     margin: 4,
     padding: 2

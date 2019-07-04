@@ -14,8 +14,11 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import SimpleModal from "../components/modal";
-import Card from "@material-ui/core/Card";
-import Divider from '@material-ui/core/Divider';
+import Divider from "@material-ui/core/Divider";
+import SimpleCard from "../components/cards";
+import SimpleAppBar from "../components/navbar";
+import CardActions from "@material-ui/core/CardActions";
+import Box from "@material-ui/core/Box";
 
 const database = firebase.firestore();
 const firebaseAppAuth = firebase.auth();
@@ -24,6 +27,13 @@ const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     width: 500
+  },
+  paper: {
+    padding: theme.spacing(3, 2)
+  },
+  button: {
+    margin: 4
+
   }
 }));
 
@@ -153,7 +163,6 @@ class Hall extends React.Component {
       this.setState({
         order: addItem
       });
-      console.log(this.state.order);
     }
   };
 
@@ -205,7 +214,6 @@ class Hall extends React.Component {
           let obj = Object.assign({}, doc.data(), { id: doc.id });
           cardData.push(obj);
         });
-        console.log(cardData);
         this.setState({
           closedOrders: cardData
         });
@@ -227,141 +235,199 @@ class Hall extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              {this.state.colaborator}
-              <TextField
-                type="text"
-                value={this.state.customerName}
-                placeholder="Digite o nome do cliente"
-                onChange={e => this.handleChange(e, "customerName")}
-              />
-              <Button onClick={this.logOut}>Sair</Button>{" "}
-            </Paper>
-          </Grid>
-          <Grid item xs={6}>
-            <Paper className={classes.paper}>
-              <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
-                <TabContainer value={1} >
+        <Grid item xs={12}>
+          <SimpleAppBar
+            conteudo={
+              <>
+                <Typography variant="h6" className={classes.title}>
                   {" "}
-                  {product.map(product => {
-                    if (
-                      (product.menu === "day" &&
-                      product.name === "HAMBÚRGUER DUPLO") ||
-                      product.name === "HAMBÚRGUER SIMPLES"
-                    ) {
-                      return (
-                        <Button
-                          key={product.name}
-                          variant="contained"
-                          onClick={() => this.selectItem(product)}
-                        >
-                          {product.name}
-                          <br />
-                          {product.price} <SimpleModal />
-                        </Button>
-                      );
-                    }
-                    if (product.menu === "day") {
-                      return (
-                        <Button
-                          key={product.name}
-                          variant="contained"
-                          onClick={() => this.selectItem(product)}
-                        >
-                          {product.name}
-                          <br />
-                          {product.price}{" "}
-                        </Button>
-                      );
-                    }
-                  })}
-                </TabContainer>
-                <TabContainer value={0} >
+                  Olá {this.state.colaborator}, qual o nome de seu cliente:{" "}
+                </Typography>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  type="text"
+                  value={this.state.customerName}
+                  placeholder="Digite o nome do cliente"
+                  onChange={e => this.handleChange(e, "customerName")}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={this.logOut}
+                >
                   {" "}
-                  {product.map((product, i) => {
-                    if (product.menu === "breakfest") {
-                      return (
-                        <Button
-                          key={i}
-                          variant="contained"
-                          onClick={() => this.selectItem(product)}
-                        >
-                          {product.name}
-                          
-                          R${product.price}
-                        </Button>
-                      );
-                    }
-                  })}
-                </TabContainer>
-              </FullWidthTabs>
-            </Paper>
-          </Grid>
-          <Grid item xs={6}>
-            <Paper className={classes.paper}>
-              <Typography variant="h6" className={classes.title}>
-                {<> {this.state.customerName}</>}
-              </Typography>
-            </Paper>
-            <Paper className={classes.paper}>
-              <List>
-                {" "}
-                {this.state.order.map((product, i) => {
-                  return (
-                    <ListItem key={i}>
-                      <ListItemIcon>
-                        <DeleteIcon onClick={() => this.deleteItem(product)} />
-                      </ListItemIcon>
-                      <ListItemText>
-                        {" "}
-                        {product.amount} - {product.name} -{" "}
-                        {`R$ ${product.price},00`} - Total
-                      </ListItemText>
-                    </ListItem>
-                  );
-                })}
-              </List>
-              <Divider variant="middle" />
-              <Typography align="right" variant="h6" className={classes.title}>
-                R$ {totalPrice}{" "}
-              </Typography>
-            </Paper>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={this.sendOrder}
-            >
-              {" "}
-              Enviar
-            </Button>
-          </Grid>
+                  Sair{" "}
+                </Button>
+              </>
+            }
+          />
         </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>
-            <Typography variant="h6" className={classes.title} />
+
+        <Box display="flex" flexDirection="row">
+          <Grid item xs={6}>
+            <Box m={3}>
+              <Paper className={classes.paper}>
+                <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
+                  <TabContainer value={1}>
+                    {" "}
+                    {product.map(product => {
+                      if (
+                        (product.menu === "day" &&
+                          product.name === "HAMBÚRGUER DUPLO") ||
+                        product.name === "HAMBÚRGUER SIMPLES"
+                      ) {
+                        return (
+                          <Button
+                            key={product.name}
+                            variant="contained"
+                            onClick={() => this.selectItem(product)}
+                          >
+                            {product.name}
+                            <br />
+                            {product.price} <SimpleModal />
+                          </Button>
+                        );
+                      }
+                      if (product.menu === "day") {
+                        return (
+                          <Button
+                            key={product.name}
+                            variant="contained"
+                            className={classes.button}
+                            onClick={() => this.selectItem(product)}
+                          >
+                            {product.name}
+                            <br/> R$ 
+                            {product.price}{" "}
+                          </Button>
+                        );
+                      }
+                    })}
+                  </TabContainer>
+                  <TabContainer value={0}>
+                    {" "}
+                    {product.map((product, i) => {
+                      if (product.menu === "breakfest") {
+                        return (
+                          <Button
+                            key={i}
+                            variant="contained"
+                            className={classes.button}
+                            onClick={() => this.selectItem(product)}
+                          >
+                            {product.name}
+                            <br/> R$ 
+                            {product.price}
+                          </Button>
+                        );
+                      }
+                    })}
+                  </TabContainer>
+                </FullWidthTabs>
+              </Paper>
+            </Box>
+          </Grid>
+          <Grid item xs={6}>
+            <Box m={3}>
+              <Paper className={classes.paper}>
+                <Typography variant="h6" className={classes.title}>
+                  {<> {this.state.customerName}</>}
+                </Typography>
+              </Paper>
+              <Paper className={classes.paper}>
+                <List>
+                  {" "}
+                  {this.state.order.map((product, i) => {
+                    return (
+                      <ListItem key={i}>
+                        <ListItemIcon>
+                          <DeleteIcon
+                            onClick={() => this.deleteItem(product)}
+                          />
+                        </ListItemIcon>
+                        <ListItemText>
+                          {" "}
+                          {product.amount} - {product.name} -{" "}
+                          {`R$ ${product.price},00`} 
+                        </ListItemText>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+                <Divider variant="middle" />
+                <Typography
+                  align="right"
+                  variant="srOnly"
+                  className={classes.title}
+                >
+                Total R$ {totalPrice}{" "}
+                </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                onClick={this.sendOrder}
+                >
+                {" "}
+                Enviar
+              </Button>
+              </Paper>
+            </Box >
+          </Grid>
+        </Box>
+
+        <Grid item xs={12}>
+          <Box
+            display="flex"
+            flexDirection="row"
+            flexWrap="wrap"
+            p={4}
+            className={classes.paper}
+          >
             {this.state.closedOrders.map((item, index) => {
               return (
-                <Card key={index}>
-                  {item.customerName}
-                  {item.order.map((item, index) => {
-                    return <p key={index}> {item.name}</p>;
-                  })}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    onClick={() => this.concludeOrder(item.id)}
-                  >
-                    {" "}
-                    Entregue{" "}
-                  </Button>
-                </Card>
+                <SimpleCard 
+                  key={index}
+                  content={
+                    <div>
+                      <Typography
+                        color="textSecondary"
+                        className={classes.title}
+                      >
+                        {item.customerName}
+                      </Typography>
+                      <CardActions>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={classes.button}
+                          onClick={() => {
+                            console.log();
+                          }}
+                        >
+                          {" "}
+                          Ver itens{" "}
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={classes.button}
+                          onClick={() => this.concludeOrder(item.id)}
+                        >
+                          {" "}
+                          Entregue{" "}
+                        </Button>
+                      </CardActions>
+                    </div>
+                  }
+                />
               );
             })}
-          </Paper>
+          </Box>
         </Grid>
       </div>
     );
