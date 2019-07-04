@@ -17,7 +17,6 @@ export function TabContainer({ children, dir }) {
 
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired
 };
 
 const useStyles = makeStyles(theme => ({

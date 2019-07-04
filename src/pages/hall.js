@@ -5,7 +5,7 @@ import { TabContainer } from "../components/tabs";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import ContainedButtons from "../components/buttons";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -31,8 +31,10 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(3, 2)
   },
-  button: {
-    margin: 4
+  title: {
+    padding: theme.spacing(3, 2),
+    margin: 4,
+    padding: 2
 
   }
 }));
@@ -232,7 +234,6 @@ class Hall extends React.Component {
     const totalPrice = this.state.order.reduce((acc, cur) => {
       return acc + cur.amount * cur.price;
     }, 0);
-
     return (
       <div className={classes.root}>
         <Grid item xs={12}>
@@ -240,8 +241,7 @@ class Hall extends React.Component {
             conteudo={
               <>
                 <Typography variant="h6" className={classes.title}>
-                  {" "}
-                  Olá {this.state.colaborator}, qual o nome de seu cliente:{" "}
+                  Olá {this.state.colaborator}, qual o nome de seu cliente:
                 </Typography>
                 <TextField
                   variant="outlined"
@@ -253,79 +253,77 @@ class Hall extends React.Component {
                   placeholder="Digite o nome do cliente"
                   onChange={e => this.handleChange(e, "customerName")}
                 />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  onClick={this.logOut}
-                >
-                  {" "}
-                  Sair{" "}
-                </Button>
+                <ContainedButtons text="sair" onClick={this.logOut} />
               </>
             }
           />
         </Grid>
-
         <Box display="flex" flexDirection="row">
           <Grid item xs={6}>
             <Box m={3}>
               <Paper className={classes.paper}>
                 <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
                   <TabContainer value={1}>
-                    {" "}
-                    {product.map(product => {
-                      if (
-                        (product.menu === "day" &&
-                          product.name === "HAMBÚRGUER DUPLO") ||
-                        product.name === "HAMBÚRGUER SIMPLES"
-                      ) {
-                        return (
-                          <Button
-                            key={product.name}
-                            variant="contained"
-                            onClick={() => this.selectItem(product)}
-                          >
-                            {product.name}
-                            <br />
-                            {product.price} <SimpleModal />
-                          </Button>
-                        );
-                      }
-                      if (product.menu === "day") {
-                        return (
-                          <Button
-                            key={product.name}
-                            variant="contained"
-                            className={classes.button}
-                            onClick={() => this.selectItem(product)}
-                          >
-                            {product.name}
-                            <br/> R$ 
-                            {product.price}{" "}
-                          </Button>
-                        );
-                      }
-                    })}
+                    <Box display="flex" flexDirection="row" flexWrap="wrap">
+                      {product.map(product => {
+                        if (
+                          (product.menu === "day" &&
+                            product.name === "HAMBÚRGUER DUPLO") ||
+                          product.name === "HAMBÚRGUER SIMPLES"
+                        ) {
+                          return (
+                            <ContainedButtons
+                              key={product.name}
+                              onClick={() => this.selectItem(product)}
+                              text={
+                                <>
+                                  {" "}
+                                  {product.name}
+                                  <br />
+                                  {product.price}{" "}
+                                </>
+                              }
+                            />
+                          );
+                        }
+                        if (product.menu === "day") {
+                          return (
+                            <ContainedButtons
+                              key={product.name}
+                              onClick={() => this.selectItem(product)}
+                              text={
+                                <>
+                                  {product.name}
+                                  <br /> R$
+                                  {product.price}{" "}
+                                </>
+                              }
+                            />
+                          );
+                        }
+                      })}
+                    </Box>
                   </TabContainer>
                   <TabContainer value={0}>
-                    {" "}
-                    {product.map((product, i) => {
-                      if (product.menu === "breakfest") {
-                        return (
-                          <Button
-                            key={i}
-                            variant="contained"
-                            className={classes.button}
-                            onClick={() => this.selectItem(product)}
-                          >
-                            {product.name}
-                            <br/> R$ 
-                            {product.price}
-                          </Button>
-                        );
-                      }
-                    })}
+                    <Box display="flex" flexDirection="row" flexWrap="wrap">
+                      {product.map((product, i) => {
+                        if (product.menu === "breakfest") {
+                          return (
+                            <ContainedButtons
+                              key={i}
+                              onClick={() => this.selectItem(product)}
+                              text={
+                                <>
+                                  {product.name}
+                                  <br /> R$
+                                  {product.price}
+                                </>
+                              }
+                            />
+                          );
+                        }
+                      })}
+                    </Box>
                   </TabContainer>
                 </FullWidthTabs>
               </Paper>
@@ -350,33 +348,20 @@ class Hall extends React.Component {
                           />
                         </ListItemIcon>
                         <ListItemText>
-                          {" "}
-                          {product.amount} - {product.name} -{" "}
-                          {`R$ ${product.price},00`} 
+                          {product.amount} - {product.name}
+                          {`R$ ${product.price},00`}
                         </ListItemText>
                       </ListItem>
                     );
                   })}
                 </List>
                 <Divider variant="middle" />
-                <Typography
-                  align="right"
-                  variant="srOnly"
-                  className={classes.title}
-                >
-                Total R$ {totalPrice}{" "}
+                <Typography align="right" >
+                  Total R$ {totalPrice}
                 </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={this.sendOrder}
-                >
-                {" "}
-                Enviar
-              </Button>
+                <ContainedButtons text="Enviar" onClick={this.sendOrder} />
               </Paper>
-            </Box >
+            </Box>
           </Grid>
         </Box>
 
@@ -390,7 +375,7 @@ class Hall extends React.Component {
           >
             {this.state.closedOrders.map((item, index) => {
               return (
-                <SimpleCard 
+                <SimpleCard
                   key={index}
                   content={
                     <div>
@@ -401,26 +386,18 @@ class Hall extends React.Component {
                         {item.customerName}
                       </Typography>
                       <CardActions>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          className={classes.button}
+                        <ContainedButtons
+                          text="Ver pedido"
                           onClick={() => {
                             console.log();
                           }}
                         >
-                          {" "}
-                          Ver itens{" "}
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          className={classes.button}
+                          Ver itens
+                        </ContainedButtons>
+                        <ContainedButtons
+                          text="Entregar"
                           onClick={() => this.concludeOrder(item.id)}
-                        >
-                          {" "}
-                          Entregue{" "}
-                        </Button>
+                        />
                       </CardActions>
                     </div>
                   }

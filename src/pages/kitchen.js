@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import firebase from "../firebaseConfig";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
