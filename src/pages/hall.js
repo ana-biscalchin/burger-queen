@@ -20,6 +20,7 @@ import SimpleAppBar from "../components/navbar";
 import CardActions from "@material-ui/core/CardActions";
 import Box from "@material-ui/core/Box";
 import products from "../components/products.json";
+
 const database = firebase.firestore();
 const firebaseAppAuth = firebase.auth();
 
@@ -35,7 +36,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 2),
     margin: 4,
     padding: 2
-  }
+  },
+ 
 }));
 
 class Hall extends React.Component {
@@ -173,8 +175,8 @@ class Hall extends React.Component {
     return (
       <div className={classes.root}>
         <Grid item xs={12}>
-          <SimpleAppBar 
-            conteudo={
+          <SimpleAppBar
+            children={
               <>
                 <Typography variant="h6" className={classes.title}>
                   Olá {this.state.colaborator}, qual o nome de seu cliente:
@@ -183,13 +185,15 @@ class Hall extends React.Component {
                   variant="outlined"
                   margin="normal"
                   required
-                  minWidth={200}
                   type="text"
                   value={this.state.customerName}
                   placeholder="Digite o nome do cliente"
                   onChange={e => this.handleChange(e, "customerName")}
                 />
-                <ContainedButtons text="sair" onClick={this.logOut} />
+                <Box>
+
+                <ContainedButtons   text="sair" onClick={this.logOut} />
+                </Box>
               </>
             }
           />
@@ -202,17 +206,19 @@ class Hall extends React.Component {
                   <TabContainer  value={1}>
                     {products.product.day.map((item, i) => {
                       return (
-                        <ContainedButtons
-                          key={i}
-                          onClick={() => this.selectItem(item)}
-                          text={
-                            <>
-                              {item.name}
-                              <br />
-                              {item.price}
-                            </>
-                          }
-                        />
+                        
+                          <ContainedButtons
+                            key={i}
+                            onClick={() => this.selectItem(item)}
+                            text={
+                              <>
+                                {item.name}
+                                <br />
+                                {item.price}
+                              </>
+                            }
+                          />
+                      
                       );
                     })}
                   </TabContainer>
@@ -220,6 +226,7 @@ class Hall extends React.Component {
                     {products.product.breakfast.map((item, i) => {
                       return (
                         <ContainedButtons
+                          size="small"
                           key={i}
                           onClick={() => this.selectItem(item)}
                           text={

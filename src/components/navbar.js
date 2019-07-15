@@ -2,22 +2,24 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import logo from "../images/logo.png";
 
 const useStyles = makeStyles({
   root: {
-    flexGrow: 1,
+     display: "flex",
 
-  }
+   }
 });
 
-export default function SimpleAppBar({conteudo}) {
+export default function SimpleAppBar({children}) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <AppBar  position="static" color="default">
-        <Toolbar>
-        {conteudo}
+        <Toolbar display="flex">
+        <img src={logo} alt="logo hamburguer" width={70}  />
+        {children}
         </Toolbar>
       </AppBar>
     </div>

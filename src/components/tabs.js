@@ -9,19 +9,27 @@ import Typography from "@material-ui/core/Typography";
 
 export function TabContainer({ children, dir }) {
   return (
-    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
+    <Typography
+      component="div"
+      dir={dir}
+      style={{
+        padding: 8 * 3,
+        display: "inline-flex",
+        scrollBehavior: "auto"
+      }}
+    >
       {children}
     </Typography>
   );
 }
 
 TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   }
 }));
 
