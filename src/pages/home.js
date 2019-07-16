@@ -10,8 +10,7 @@ import logo from "../images/logo.png";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
-    flexGrow: 1,
+     flexGrow: 1,
     marginTop: 80
   }
 }));

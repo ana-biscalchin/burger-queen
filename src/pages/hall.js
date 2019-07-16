@@ -13,7 +13,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import SimpleModal from "../components/modal";
 import Divider from "@material-ui/core/Divider";
 import SimpleCard from "../components/cards";
 import SimpleAppBar from "../components/navbar";
@@ -36,8 +35,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 2),
     margin: 4,
     padding: 2
-  },
- 
+  }
 }));
 
 class Hall extends React.Component {
@@ -175,50 +173,46 @@ class Hall extends React.Component {
     return (
       <div className={classes.root}>
         <Grid item xs={12}>
-          <SimpleAppBar
-            children={
-              <>
-                <Typography variant="h6" className={classes.title}>
+          <SimpleAppBar>
+            <>
+              <Typography variant="h6" className={classes.title}>
+                <span>
+                  {" "}
                   Olá {this.state.colaborator}, qual o nome de seu cliente:
-                </Typography>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  type="text"
-                  value={this.state.customerName}
-                  placeholder="Digite o nome do cliente"
-                  onChange={e => this.handleChange(e, "customerName")}
-                />
-                <Box>
-
-                <ContainedButtons   text="sair" onClick={this.logOut} />
-                </Box>
-              </>
-            }
-          />
+                </span>
+              </Typography>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                type="text"
+                value={this.state.customerName}
+                placeholder="Digite o nome do cliente"
+                onChange={e => this.handleChange(e, "customerName")}
+              />
+            </>
+            <ContainedButtons text="sair" onClick={this.logOut} />
+          </SimpleAppBar>
         </Grid>
         <Box display="flex" flexDirection="row">
           <Grid item xs={6}>
             <Box m={3}>
               <Paper className={classes.paper}>
                 <FullWidthTabs titles={["DIÁRIO", "MANHÃ"]}>
-                  <TabContainer  value={1}>
+                  <TabContainer value={1}>
                     {products.product.day.map((item, i) => {
                       return (
-                        
-                          <ContainedButtons
-                            key={i}
-                            onClick={() => this.selectItem(item)}
-                            text={
-                              <>
-                                {item.name}
-                                <br />
-                                {item.price}
-                              </>
-                            }
-                          />
-                      
+                        <ContainedButtons
+                          key={i}
+                          onClick={() => this.selectItem(item)}
+                          text={
+                            <>
+                              {item.name}
+                              <br /> R$
+                              {item.price}
+                            </>
+                          }
+                        />
                       );
                     })}
                   </TabContainer>
@@ -256,7 +250,7 @@ class Hall extends React.Component {
                   {" "}
                   {this.state.order.map((product, i) => {
                     return (
-                      <ListItem key={i}>
+                      <ListItem justifyContent="space-between" key={i}>
                         <ListItemIcon>
                           <DeleteIcon
                             onClick={() => this.deleteItem(product)}
@@ -271,8 +265,17 @@ class Hall extends React.Component {
                   })}
                 </List>
                 <Divider variant="middle" />
-                <Typography align="right">Total R$ {totalPrice}</Typography>
-                <ContainedButtons text="Enviar" onClick={this.sendOrder} />
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  p={1}
+                >
+                  <Typography variant="h5" alignRight colorSecondary p={2}>
+                    Total R$ {totalPrice}
+                  </Typography>
+                  <ContainedButtons text="Enviar" onClick={this.sendOrder} />
+                </Box>
               </Paper>
             </Box>
           </Grid>

@@ -2,69 +2,69 @@
   "product": {
     "breakfast": [
       {
-        "name": "café com leite",
+        "name": "Café com leite",
         "price": 5
       },
       {
-        "name": "café americano",
+        "name": "Café americano",
         "price": 7
       },
       {
-        "name": "sanduiche de presunto e queijo",
+        "name": "Sand. presunto e queijo",
         "price": 10
       },
       {
-        "name": "suco de fruta natural",
+        "name": "Suco de fruta natural",
         "price": 7
       }
     ],
     "day": [
       {
-        "name": "hamburguer bovino simples",
+        "name": "Hamb. bovino simples",
         "price": 10
       },
       {
-        "name": "hamburguer bovino duplo",
+        "name": "Hamb. bovino duplo",
         "price": 15
       },
       {
-        "name": "hamburguer de frango simples",
+        "name": "Hamb. frango simples",
         "price": 10
       },
       {
-        "name": "hamburguer de frango duplo",
+        "name": "Hamb.frango duplo",
         "price": 15
       },
       {
-        "name": "hamburguer vegetariano simples",
+        "name": "Hamb. veg. simples",
         "price": 10
       },
       {
-        "name": "hamburguer vegetariano duplo",
+        "name": "Hamb. veg. duplo",
         "price": 15
       },
       {
-        "name": "batata frita",
+        "name": "Batata frita",
         "price": 5
       },
       {
-        "name": "anéis de cebola",
+        "name": "Anéis de cebola",
         "price": 5
       },
       {
-        "name": "água 500ml",
+        "name": "Água 500ml",
         "price": 5
       },
       {
-        "name": "água 750ml",
+        "name": "Água 750ml",
         "price": 7
       },
       {
-        "name": "bebida gaseificada 500ml",
+        "name": "Bebida gas. 500ml",
         "price": 7
       },
       {
-        "name": "bebida gaseificada 750ml",
+        "name": "Bebida gas. 750ml",
         "price": 10
       }
     ]
